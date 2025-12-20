@@ -1,0 +1,34 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* A11y: Skip to Content Link */
+.skip-link {
+    position: absolute;
+    top: -50px;
+    left: 1rem;
+    background: #4f46e5;
+    color: white;
+    padding: 0.75rem 1.5rem;
+    z-index: 100;
+    transition: top 0.2s;
+    font-weight: bold;
+    border-radius: 0 0 0.5rem 0.5rem;
+}
+.skip-link:focus {
+    top: 0;
+    outline: 2px solid white;
+    outline-offset: -2px;
+}
+
+/* Background grid pattern */
+.bg-grid-pattern {
+    background-image: linear-gradient(to right, #1e293b 1px, transparent 1px),
+                      linear-gradient(to bottom, #1e293b 1px, transparent 1px);
+    background-size: 40px 40px;
+}
+
+/* Custom Animation Utility Classes (fallback if tailwind config fails) */
+.animation-delay-2000 {
+    animation-delay: 2s;
+}
