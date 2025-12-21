@@ -172,3 +172,43 @@ if (contactForm) {
         }
     });
 }
+
+// --- 4. LEGAL MODAL LOGIC (PRIVACY & TERMS) ---
+const legalModal = document.getElementById('legal-modal');
+
+// Отваряне на модала
+window.openLegalModal = (sectionId) => {
+    if (!legalModal) return;
+    
+    // Показване
+    legalModal.classList.remove('hidden');
+    
+    // Скролване до 'privacy' или 'terms' вътре в модала
+    if (sectionId) {
+        // Търсим елемент с ID "legal-privacy" или "legal-terms"
+        const targetSection = document.getElementById(`legal-${sectionId}`);
+        if (targetSection) {
+            // Малко закъснение, за да се рендира модалът
+            setTimeout(() => {
+                targetSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }, 100);
+        }
+    }
+    
+    // Забрана на скролването на основния сайт
+    document.body.style.overflow = 'hidden';
+};
+
+// Затваряне на модала
+window.closeLegalModal = () => {
+    if (!legalModal) return;
+    legalModal.classList.add('hidden');
+    document.body.style.overflow = ''; // Връщане на скрола
+};
+
+// Затваряне с ESC бутон
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && !legalModal.classList.contains('hidden')) {
+        window.closeLegalModal();
+    }
+});

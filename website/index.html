@@ -358,13 +358,88 @@
         </section>
     </main>
 
-    <!-- Footer -->
+       <!-- Footer -->
     <footer class="bg-slate-950 py-8 border-t border-slate-900" role="contentinfo">
         <div class="max-w-6xl mx-auto px-4 text-center text-slate-600 text-sm">
             <p>&copy; <span id="year"></span> Nikolay Dimitrov. All rights reserved.</p>
+            
+            <!-- Legal Links (Pop-up Buttons) -->
+            <div class="mt-2 mb-2 space-x-4">
+                <button onclick="window.openLegalModal('privacy')" class="text-slate-500 hover:text-indigo-400 transition-colors focus:outline-none focus:underline">Privacy Policy</button>
+                <button onclick="window.openLegalModal('terms')" class="text-slate-500 hover:text-indigo-400 transition-colors focus:outline-none focus:underline">Terms of Service</button>
+            </div>
+
             <p class="mt-2 text-xs font-mono text-indigo-500/80">Deployed on AWS using Terraform & GitHub Actions</p>
         </div>
     </footer>
+
+    <!-- Legal Modal (Hidden by default) -->
+    <div id="legal-modal" class="fixed inset-0 z-[100] hidden" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+        <!-- Backdrop -->
+        <div class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm transition-opacity cursor-pointer" onclick="window.closeLegalModal()"></div>
+
+        <div class="fixed inset-0 z-10 overflow-y-auto pointer-events-none">
+            <div class="flex min-h-full items-center justify-center p-4 text-center sm:p-0 pointer-events-none">
+                <div class="relative transform overflow-hidden rounded-lg bg-slate-900 border border-slate-800 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-4xl pointer-events-auto">
+                    
+                    <!-- Header -->
+                    <div class="bg-slate-900 px-4 py-3 sm:px-6 flex justify-between items-center border-b border-slate-800">
+                        <h3 class="text-lg font-medium leading-6 text-white" id="modal-title">Legal Information</h3>
+                        <button type="button" onclick="window.closeLegalModal()" class="text-slate-400 hover:text-white focus:outline-none">
+                            <i data-lucide="x" class="w-6 h-6"></i>
+                        </button>
+                    </div>
+
+                    <!-- Content -->
+                    <div class="px-4 py-5 sm:p-6 max-h-[70vh] overflow-y-auto text-slate-300 space-y-8 prose prose-invert max-w-none custom-scrollbar">
+                        
+                        <!-- Privacy Policy Section -->
+                        <div id="legal-privacy" class="legal-section">
+                            <h2 class="text-2xl font-bold text-white mb-4">Privacy Policy</h2>
+                            <p class="text-sm text-slate-500 mb-4">Last updated: January 2026</p>
+                            
+                            <h4 class="text-lg font-semibold text-white mt-4">1. Introduction</h4>
+                            <p>Welcome to the professional portfolio of Nikolay Dimitrov. I respect your privacy and am committed to protecting your personal data.</p>
+                            
+                            <h4 class="text-lg font-semibold text-white mt-4">2. Data I Collect</h4>
+                            <p>I only collect personal data you voluntarily provide via the contact form, specifically: Name, Email Address, and the content of your message.</p>
+                            
+                            <h4 class="text-lg font-semibold text-white mt-4">3. Purpose & Legal Basis</h4>
+                            <p>The data is collected solely to respond to your professional inquiries (Legitimate Interest) or to take steps prior to entering into a contract (if you request a quote). I do not sell your data.</p>
+                            
+                            <h4 class="text-lg font-semibold text-white mt-4">4. Data Retention</h4>
+                            <p>Inquiry emails are retained for up to 12 months unless a business relationship is established, in which case data is retained per Bulgarian tax laws.</p>
+                        </div>
+
+                        <hr class="border-slate-700">
+
+                        <!-- Terms Section -->
+                        <div id="legal-terms" class="legal-section">
+                            <h2 class="text-2xl font-bold text-white mb-4">Terms of Service</h2>
+                            <p class="text-sm text-slate-500 mb-4">Last updated: January 2026</p>
+                            
+                            <h4 class="text-lg font-semibold text-white mt-4">1. General Information</h4>
+                            <p>By accessing this website, you agree to these Terms. This site is a portfolio showcasing professional DevOps services.</p>
+                            
+                            <h4 class="text-lg font-semibold text-white mt-4">2. No Binding Offer</h4>
+                            <p>The information provided here does not constitute a binding legal offer. All services are subject to a separate written agreement (Statement of Work).</p>
+                            
+                            <h4 class="text-lg font-semibold text-white mt-4">3. Limitation of Liability</h4>
+                            <p>Content is provided "as is". I am not liable for any direct or indirect damages arising from the use of this website.</p>
+                            
+                            <h4 class="text-lg font-semibold text-white mt-4">4. Governing Law</h4>
+                            <p>These terms are governed by the laws of the Republic of Bulgaria and the European Union.</p>
+                        </div>
+                    </div>
+
+                    <!-- Footer -->
+                    <div class="bg-slate-900 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6 border-t border-slate-800">
+                        <button type="button" onclick="window.closeLegalModal()" class="mt-3 inline-flex w-full justify-center rounded-md bg-slate-800 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-slate-700 sm:mt-0 sm:w-auto">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <!-- MAIN JS MODULE (Imports logic & handles ENV vars) -->
     <script type="module" src="src/js/script.js"></script>
