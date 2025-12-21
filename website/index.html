@@ -15,12 +15,10 @@
     <link rel="canonical" href="https://nikolaydimitrov.dev/">
     
     <!-- External Libraries (Tailwind CSS & Lucide Icons) -->
-<!--  <script src="https://cdn.tailwindcss.com"></script>-->
     <script src="https://unpkg.com/lucide@latest"></script>
 </head>
 <body class="bg-slate-950 text-slate-300 font-sans antialiased selection:bg-indigo-500 selection:text-white">
 
-    <!-- Accessibility: Skip Link -->
     <a href="#main-content" class="skip-link">Skip to main content</a>
 
     <!-- Navigation Bar -->
@@ -195,7 +193,7 @@
                         class="w-full bg-slate-950 border border-slate-700 rounded-lg p-4 text-white placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all mb-4 resize-none"
                         placeholder="e.g., I need a scalable backend for a mobile app using Docker and a database..."></textarea>
                     
-                    <!-- !!! IMPORTANT: Calling global function from module via window !!! -->
+                    <!-- Calling global function from module via window !!! -->
                     <button onclick="window.generateArchitecture()" id="ai-btn"
                         class="w-full sm:w-auto px-8 py-3 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg font-medium transition-all flex items-center justify-center gap-2 mx-auto disabled:opacity-50 disabled:cursor-not-allowed">
                         <span>Generate Strategy ✨</span>

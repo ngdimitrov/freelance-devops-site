@@ -5,7 +5,7 @@ import { fileURLToPath } from 'url';
 import { Resend } from 'resend';
 import dotenv from 'dotenv';
 
-// Зареждане на .env променливите
+//  .env environment variables
 dotenv.config();
 
 const __filename = fileURLToPath(import.meta.url);
@@ -15,13 +15,13 @@ const app = express();
 const port = process.env.PORT;
 
 // Middleware
-app.use(cors()); // Позволява фронтенд да говори със сървъра
+app.use(cors()); // allow FE to communicate with BE
 app.use(express.json());
 
-// Инициализация на Resend
+// Init Resend
 const resend = new Resend(process.env.RESEND_API_KEY);
 
-// API endpoint за контакт
+// API endpoint
 app.post('/api/contact', async (req, res) => {
     const { name, email, message } = req.body;
 
@@ -52,15 +52,57 @@ app.post('/api/contact', async (req, res) => {
     }
 });
 
-// Serve static files от Vite build
+
 app.use(express.static(path.join(__dirname, '../dist')));
 
-// SPA fallback - за React/Vue/Svelte routing
+
 app.get('*', (req, res) => {
     res.sendFile(path.join(__dirname, '../dist/index.html'));
 });
 
-// Стартираме сървъра
 app.listen(port, () => {
     console.log(`Server running at http://localhost:${port}`);
+});
+
+
+// Gemini API endpoint
+app.post('/api/generate', async (req, res) => {
+    const { prompt } = req.body;
+    const apiKey = process.env.GEMINI_API_KEY; 
+
+    if (!apiKey) {
+        return res.status(500).json({ error: 'Server configuration error: Missing API Key' });
+    }
+
+    if (!prompt) {
+        return res.status(400).json({ error: 'Missing prompt' });
+    }
+
+    const systemPrompt = `Act as Nikolay Dimitrov, a Senior AWS DevOps Engineer. 
+    Provide a concise, high-level technical solution (max 100 words).
+    Focus on AWS services (ECS, Lambda, RDS, S3) and Terraform. 
+    Use bolding for service names.`;
+
+    try {
+        const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                contents: [{ parts: [{ text: prompt }] }],
+                systemInstruction: { parts: [{ text: systemPrompt }] }
+            })
+        });
+
+        if (!response.ok) {
+            const errData = await response.json();
+            throw new Error(errData.error?.message || 'Google API Error');
+        }
+
+        const data = await response.json();
+        res.json(data);
+
+    } catch (error) {
+        console.error("Gemini Error:", error);
+        res.status(500).json({ error: 'Failed to generate content' });
+    }
 });

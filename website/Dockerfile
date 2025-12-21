@@ -1,15 +1,35 @@
-FROM node:22-alpine
+FROM node:24-alpine AS builder
 
 WORKDIR /app
 
 COPY package*.json ./
-RUN npm install --production
+RUN npm ci
 
-COPY dist ./dist
-COPY server ./server
-COPY .env .env
+COPY . .
 
-ENV PORT=3000
+RUN npm run build
+
+
+FROM node:24-alpine AS runner
+
+WORKDIR /app
+
+ENV NODE_ENV=production
+
+RUN chown -R node:node /app
+
+COPY package*.json ./
+RUN npm ci --omit=dev && npm cache clean --force
+
+
+COPY --from=builder --chown=node:node /app/dist ./dist
+COPY --from=builder --chown=node:node /app/server ./server 
+
+USER node
+
 EXPOSE 3000
 
-CMD ["node", "server/server.js"]
+HEALTHCHECK --interval=30s --timeout=3s \
+  CMD wget --quiet --tries=1 --spider http://localhost:3000/ || exit 1
+
+CMD ["npm", "run", "start"]
