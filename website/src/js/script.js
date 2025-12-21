@@ -117,7 +117,7 @@ if (contactForm) {
             const result = await response.json();
 
             if (response.ok) {
-                statusDiv.textContent = "Email sent successfully! 🚀";
+                statusDiv.textContent = "Email sent successfully! Thank you.";
                 statusDiv.className = "text-sm font-medium text-center h-5 text-green-400 opacity-100";
                 contactForm.reset();
             } else {
