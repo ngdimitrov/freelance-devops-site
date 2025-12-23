@@ -20,7 +20,7 @@ resource "aws_iam_role_policy_attachment" "lambda_logs" {
 
 resource "aws_lambda_function" "gemini_api" {
   filename      = "../gemini.zip"
-  function_name = "geminiChatFunction2"
+  function_name = "geminiChatFunction"
   role          = aws_iam_role.lambda_role.arn
   handler       = "index.handler"
   runtime       = "nodejs22.x"
@@ -37,11 +37,11 @@ resource "aws_lambda_function" "gemini_api" {
 
 resource "aws_lambda_function" "resend_api" {
   filename      = "../resend.zip"
-  function_name = "sendEmailFunction2"
+  function_name = "sendEmailFunction"
   role          = aws_iam_role.lambda_role.arn
   handler       = "index.handler"
   runtime       = "nodejs22.x"
-  timeout       = 4
+  timeout       = 3
 
   source_code_hash = filebase64sha256("../resend.zip")
 
