@@ -27,12 +27,30 @@ jobs:
           npm ci
           npm run build
 
+      - name: Prepare Lambda Functions
+        run: |
+          cd website/services/lambda_gemini && zip -r ../../gemini.zip . && cd ../..
+          cd website/services/lambda_resend && zip -r ../../resend.zip . && cd ../..    
+
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+
+      - name: Terraform Apply
+        working-directory: ./terraform
+        run: |
+          terraform init
+          terraform apply -auto-approve \
+            -var="resend_api_key=${{ secrets.RESEND_API_KEY }}" \
+            -var="gemini_api_key=${{ secrets.GEMINI_API_KEY }}"
+        env:
+          TF_VAR_frontend_dist_path: "../website/dist"
 
       - name: Sync S3
         run: |
