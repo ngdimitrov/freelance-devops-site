@@ -4,6 +4,8 @@
         {
     "Effect": "Allow",
     "Action": [
+        "iam:ListInstanceProfilesForRole",
+        "iam:DeleteRolePolicy",
         "route53:GetChange",
         "iam:ListAttachedRolePolicies",
         "iam:ListRolePolicies",
