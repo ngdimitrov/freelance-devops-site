@@ -52,7 +52,7 @@ resource "aws_cloudfront_distribution" "main" {
     # CachingDisabled
     cache_policy_id = "4135ea2d-6df8-44a3-9df3-4b5a84be39ad" 
     # AllViewerExceptHostHeader
-    origin_request_policy_id = "b689b0a8-53d0-40b4-9392-74073010b974" 
+    origin_request_policy_id = "b689b0a8-53d0-40ab-baf2-68738e2966ac" 
   }
 
   # BEHAVIOR S3 Frontend
