@@ -2,32 +2,33 @@
     "Version": "2012-10-17",
     "Statement": [
         {
-            "Effect": "Allow",
-            "Action": [
-                "acm:DescribeCertificate",
-                "acm:GetCertificate",
-                "acm:ListCertificates",
-                "acm:ListTagsForCertificate",
-                "route53:GetHostedZone",
-                "route53:ListHostedZones",
-                "route53:ListResourceRecordSets",
-                "route53:ChangeResourceRecordSets",
-                "route53:ListTagsForResource",
-                "s3:*",
-                "lambda:*",
-                "apigateway:*",
-                "cloudfront:*",
-                "iam:GetRole",
-                "iam:CreateRole",
-                "iam:DeleteRole",
-                "iam:PutRolePolicy",
-                "iam:AttachRolePolicy",
-                "iam:DetachRolePolicy",
-                "iam:PassRole",
-                "iam:ListInstanceProfiles",
-                "iam:ListRolePolicies"
-            ],
-            "Resource": "*"
-        }
+    "Effect": "Allow",
+    "Action": [
+        "route53:GetChange",
+        "iam:ListAttachedRolePolicies",
+        "iam:ListRolePolicies",
+        "iam:GetRole",
+        "acm:ListTagsForCertificate",
+        "route53:ListTagsForResource",
+        "acm:DescribeCertificate",
+        "acm:GetCertificate",
+        "acm:ListCertificates",
+        "route53:GetHostedZone",
+        "route53:ListHostedZones",
+        "route53:ListResourceRecordSets",
+        "route53:ChangeResourceRecordSets",
+        "s3:*",
+        "lambda:*",
+        "apigateway:*",
+        "cloudfront:*",
+        "iam:CreateRole",
+        "iam:DeleteRole",
+        "iam:PutRolePolicy",
+        "iam:AttachRolePolicy",
+        "iam:DetachRolePolicy",
+        "iam:PassRole"
+    ],
+    "Resource": "*"
+}
     ]
 }
