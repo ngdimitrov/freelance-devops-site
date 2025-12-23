@@ -10,7 +10,6 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      
       - name: Checkout Code
         uses: actions/checkout@v4
 
@@ -41,23 +40,31 @@ jobs:
 
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_wrapper: false
 
       - name: Terraform Apply
+        id: tf
         working-directory: ./terraform
         run: |
           terraform init
           terraform apply -auto-approve \
             -var="resend_api_key=${{ secrets.RESEND_API_KEY }}" \
             -var="gemini_api_key=${{ secrets.GEMINI_API_KEY }}"
-        env:
-          TF_VAR_frontend_dist_path: "../website/dist"
+
+      - name: Get Terraform Outputs
+        id: outputs
+        working-directory: ./terraform
+        run: |
+          echo "bucket_name=$(terraform output -raw website_bucket_name)" >> $GITHUB_OUTPUT
+          echo "cf_id=$(terraform output -raw cloudfront_distribution_id)" >> $GITHUB_OUTPUT
 
       - name: Sync S3
         run: |
-          aws s3 sync website/dist/ s3://${{ secrets.S3_BUCKET_NAME }} --delete
+          aws s3 sync website/dist/ s3://${{ steps.outputs.outputs.bucket_name }} --delete
 
       - name: Invalidate CloudFront
         run: |
           aws cloudfront create-invalidation \
-            --distribution-id ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID }} \
+            --distribution-id ${{ steps.outputs.outputs.cf_id }} \
             --paths "/*"
