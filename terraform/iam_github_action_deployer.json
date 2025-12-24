@@ -4,6 +4,8 @@
         {
     "Effect": "Allow",
     "Action": [
+        "iam:GetRolePolicy",        
+        "iam:ListRolePolicies",
         "iam:ListInstanceProfilesForRole",
         "iam:DeleteRolePolicy",
         "route53:GetChange",
@@ -28,7 +30,8 @@
         "iam:PutRolePolicy",
         "iam:AttachRolePolicy",
         "iam:DetachRolePolicy",
-        "iam:PassRole"
+        "iam:PassRole",
+        "kms:Decrypt"
     ],
     "Resource": "*"
 }
