@@ -46,7 +46,7 @@ resource "aws_lambda_function" "gemini_api" {
   role          = aws_iam_role.lambda_role.arn
   handler       = "index.handler"
   runtime       = "nodejs22.x"
-  timeout       = 10
+  timeout       = 20
 
   source_code_hash = filebase64sha256("../gemini.zip")
 
