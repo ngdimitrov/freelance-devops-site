@@ -28,8 +28,8 @@ jobs:
 
       - name: Prepare Lambda Functions
         run: |
-          cd website/services/lambda_gemini && zip -r ../../../gemini.zip . && cd ../../..
-          cd website/services/lambda_resend && zip -r ../../../resend.zip . && cd ../../..    
+          cd website/services/lambda_gemini && npm install --production && zip -r ../../../gemini.zip . && cd ../../..
+          cd website/services/lambda_resend && npm install --production && zip -r ../../../resend.zip . && cd ../../..    
 
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
