@@ -27,7 +27,9 @@ resource "aws_iam_role_policy" "lambda_kms" {
           "kms:DescribeKey",
           "kms:CreateGrant"
         ]
-        Resource = "*" 
+        Resource = [
+          "arn:aws:kms:eu-north-1:000000000000:key/5a359d20-32e0-4eef-80ef-54003cef9aee"
+        ]
       }
     ]
   })
