@@ -27,7 +27,7 @@ resource "aws_apigatewayv2_integration" "gemini" {
   integration_type = "AWS_PROXY"
   integration_uri  = aws_lambda_function.gemini_api.invoke_arn
   payload_format_version = "2.0"
-  timeout_milliseconds     = "3000"
+  timeout_milliseconds     = "29000"
 }
 
 resource "aws_apigatewayv2_integration" "resend" {
@@ -35,7 +35,7 @@ resource "aws_apigatewayv2_integration" "resend" {
   integration_type = "AWS_PROXY"
   integration_uri  = aws_lambda_function.resend_api.invoke_arn
   payload_format_version = "2.0"
-  timeout_milliseconds     = "29000"
+  timeout_milliseconds     = "3000"
 }
 
 # Routes
