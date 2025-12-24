@@ -1,44 +1,57 @@
-# AWS Serverless Portfolio Infrastructure & AI Integration
+# Infrastructure Automation & CI/CD
 
-This repository contains the backend architecture and integration logic for my professional portfolio. The project demonstrates a modern, scalable, and highly available **Serverless** approach built entirely on **Amazon Web Services (AWS)**.
+This project is fully automated using **Infrastructure as Code (IaC)** and **CI/CD pipelines**, ensuring repeatable, secure, and production-ready deployments with **zero manual AWS console operations**.
 
-## Architecture Overview
-
-The infrastructure is designed with a "Cloud-Native" mindset, focusing on cost-optimization (Pay-as-you-go), security, and global performance.
-
-## Tech Stack
-
-* **Cloud Provider:** AWS (S3, CloudFront, Lambda, API Gateway, Route 53)
-* **Runtime:** Node.js 22.x
-* **AI Engine:** Google Gemini 2.5 Flash
-* **Email Service:** Resend (SMTP/API)
-* **Frontend:** React / Vite (Static Site Generation)
-
-### Core Components:
-* **Edge Delivery:** Static content is hosted in **Amazon S3** and distributed via **Amazon CloudFront** to ensure low latency and SSL/TLS encryption (HTTPS).
-* **API Management:** **AWS API Gateway (HTTP API)** acts as the secure entry point for all backend services, featuring CORS protection and request throttling.
-* **Serverless Compute:** * `sendEmailFunction`: A Node.js **Lambda** function that processes contact form submissions and integrates with the **Resend API** for reliable email delivery.
-    * `geminiChatFunction`: A Node.js **Lambda** function that interfaces with **Google Gemini AI** to provide real-time architectural consultancy.
-* **DNS & Domain Management:** **Amazon Route 53** manages the `nikolaydimitrov.dev` zone, handling record routing and email authentication (SPF/DKIM).
-
-## Security Implementation
-
-### 1. API Masking & Security
-To maintain a professional interface and hide internal AWS identifiers, I implemented **CloudFront Proxying**. All API requests are routed through the main domain via `/api/*` behaviors.
-* **CORS Policy:** Restricted to the authorized domain to prevent unauthorized cross-origin requests.
-* **Secrets Management:** Sensitive API keys (Gemini & Resend) are injected via **Lambda Environment Variables**, ensuring no credentials are exposed in the client-side code.
-
-### 2. Infrastructure Resilience
-* **Throttling:** Configured Rate and Burst limits in **API Gateway** to protect against DoS attacks and manage service quotas.
-* **Performance Optimization:** Adjusted Lambda timeouts (30s) and memory allocation to accommodate AI model latency.
-* **Email Deliverability:** Configured **DKIM** and **SPF** records within Route 53 to ensure high sender reputation and prevent emails from landing in spam.
-
-### 3. AI System Prompting
-The AI Consultant is governed by a strict `System Instruction` set. It is programmed to act as a **Senior AWS DevOps Engineer**, providing concise, high-level technical solutions focusing on **ECS, Lambda, RDS, S3, and Terraform**.
-
-## Future Roadmap
-* **Infrastructure as Code (IaC):** Migrate manual console configurations to **Terraform** or **AWS CDK**.
-* **Monitoring:** Implement **CloudWatch Alarms** for Lambda error tracking and API Gateway latency metrics.
+![Terraform](https://img.shields.io/badge/terraform-%235835CC.svg?style=for-the-badge&logo=terraform&logoColor=white) ![AWS](https://img.shields.io/badge/AWS-%23FF9900.svg?style=for-the-badge&logo=amazon-aws&logoColor=white) ![GitHub Actions](https://img.shields.io/badge/github%20actions-%232671E5.svg?style=for-the-badge&logo=githubactions&logoColor=white)
 
 ---
-**Developed by Nikolay Dimitrov** *Senior AWS DevOps Engineer Portfolio*
+
+## Infrastructure as Code (Terraform)
+
+All AWS resources are provisioned and managed using **Terraform**, following best practices for modularity, security, and cost efficiency.
+
+
+
+### Terraform manages:
+* ** Route 53:** Hosted zone and DNS records.
+* ** Amazon S3:** Bucket configured for static website hosting.
+* ** Amazon CloudFront:** Content delivery distribution with mandatory HTTPS.
+* ** AWS API Gateway:** HTTP API acting as the entry point.
+* ** AWS Lambda:** Serverless functions (Node.js) for backend logic.
+* ** IAM & Security:** Roles with least-privilege permissions and environment variables for secure secret injection.
+* ** Protection:** Throttling, timeouts, and API protection settings.
+
+### State Management:
+* **Remote Storage:** Terraform state is stored securely in **Amazon S3**.
+
+> **Result:** This approach guarantees fully reproducible environments, safe infrastructure changes, and a clear audit trail of all modifications.
+
+---
+
+## 🔄 Continuous Integration & Deployment (GitHub Actions)
+
+The project uses **GitHub Actions** to implement an automated CI/CD pipeline triggered on every push to the `develop` branch.
+
+
+### The pipeline performs the following steps:
+
+1.  ** Frontend Build**
+    * Installs dependencies and builds the React/Vite application.
+    * Generates the optimized `/dist` static output.
+
+2.  ** Infrastructure Deployment**
+    * Initializes Terraform, creates plans, and applies changes automatically.
+    * Ensures infrastructure and application stay perfectly in sync.
+
+3.  ** Static Site Deployment**
+    * Uploads the `/dist` folder to Amazon S3.
+    * Triggers **CloudFront cache invalidation** to deliver updates globally instantly.
+
+4.  ** Serverless Backend Deployment**
+    * Deploys updated Lambda functions and applies API Gateway configuration changes.
+
+### 🔐 Authentication & Security:
+* **Secure Access:** AWS access is handled via **GitHub Secrets** and IAM roles.
+* **No Hardcoding:** Zero AWS credentials are hardcoded in the repository, maintaining high security standards.
+
+---
