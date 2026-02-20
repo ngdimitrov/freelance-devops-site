@@ -34,3 +34,43 @@ body {
     outline: 2px solid white;
     outline-offset: -2px;
 }
+
+/* Contact success animations */
+.contact-success-icon {
+    animation: successPop 0.5s ease-out both;
+}
+.contact-success-text {
+    animation: successFadeUp 0.6s ease-out both;
+    animation-delay: 0.2s;
+}
+
+@keyframes successPop {
+    0% { transform: scale(0); opacity: 0; }
+    60% { transform: scale(1.15); }
+    100% { transform: scale(1); opacity: 1; }
+}
+@keyframes successFadeUp {
+    0% { transform: translateY(12px); opacity: 0; }
+    100% { transform: translateY(0); opacity: 1; }
+}
+
+/* Confetti */
+.confetti-piece {
+    position: absolute;
+    top: 0;
+    width: 8px;
+    height: 8px;
+    border-radius: 2px;
+    opacity: 0;
+    animation: confettiFall ease-out forwards;
+}
+@keyframes confettiFall {
+    0% {
+        transform: translateY(0) translateX(0) rotate(0deg);
+        opacity: 1;
+    }
+    100% {
+        transform: translateY(280px) translateX(var(--drift)) rotate(720deg);
+        opacity: 0;
+    }
+}

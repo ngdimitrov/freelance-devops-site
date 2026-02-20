@@ -117,9 +117,13 @@ if (contactForm) {
             const result = await response.json();
 
             if (response.ok) {
-                statusDiv.textContent = "Email sent successfully! Thank you.";
-                statusDiv.className = "text-sm font-medium text-center h-5 text-green-400 opacity-100";
-                contactForm.reset();
+                contactForm.classList.add('hidden');
+                const successDiv = document.getElementById('contact-success');
+                successDiv.classList.remove('hidden');
+                successDiv.classList.add('flex');
+                lucide.createIcons();
+                launchConfetti();
+                return;
             } else {
                 throw new Error(result.error || 'Failed to send');
             }
@@ -133,6 +137,27 @@ if (contactForm) {
             lucide.createIcons();
         }
     });
+}
+
+// CONFETTI
+function launchConfetti() {
+    const container = document.getElementById('confetti-container');
+    if (!container) return;
+    const colors = ['#818cf8', '#6366f1', '#a78bfa', '#34d399', '#fbbf24', '#f472b6', '#60a5fa'];
+    for (let i = 0; i < 60; i++) {
+        const piece = document.createElement('div');
+        piece.className = 'confetti-piece';
+        piece.style.left = 50 + (Math.random() - 0.5) * 20 + '%';
+        piece.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+        piece.style.animationDelay = Math.random() * 0.6 + 's';
+        piece.style.animationDuration = 1.2 + Math.random() * 1 + 's';
+        const drift = (Math.random() - 0.5) * 300;
+        piece.style.setProperty('--drift', drift + 'px');
+        container.appendChild(piece);
+    }
+    setTimeout(() => {
+        container.querySelectorAll('.confetti-piece').forEach(p => p.remove());
+    }, 3000);
 }
 
 //  LEGAL MODAL
