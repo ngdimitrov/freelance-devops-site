@@ -83,6 +83,18 @@ async function generateArchitecture() {
 }
 window.generateArchitecture = generateArchitecture;
 
+// CHARACTER COUNTERS
+document.querySelectorAll('textarea[maxlength]').forEach(textarea => {
+    const maxLen = textarea.getAttribute('maxlength');
+    const counterId = textarea.id + '-count';
+    const counter = document.getElementById(counterId);
+    if (!counter) return;
+    textarea.addEventListener('input', () => {
+        counter.textContent = textarea.value.length;
+        counter.parentElement.classList.toggle('text-amber-500', textarea.value.length >= maxLen * 0.9);
+        counter.parentElement.classList.toggle('text-red-400', textarea.value.length >= maxLen);
+    });
+});
 
 // CONTACT FORM
 const contactForm = document.getElementById('contact-form');

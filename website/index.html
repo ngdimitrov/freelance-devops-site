@@ -251,8 +251,9 @@
 
                 <div class="bg-slate-900 p-6 rounded-xl border border-slate-800 shadow-xl max-w-2xl mx-auto text-left">
                     <textarea id="ai-input" rows="3" maxlength="500"
-                        class="w-full bg-slate-950 border border-slate-700 rounded-lg p-4 text-white placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all mb-4 resize-none"
+                        class="w-full bg-slate-950 border border-slate-700 rounded-lg p-4 text-white placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all mb-1 resize-none"
                         placeholder="e.g., I need a scalable backend for a mobile app using Docker and a database..."></textarea>
+                    <div class="text-right text-xs text-slate-600 mb-4"><span id="ai-input-count">0</span>/500</div>
 
                     <!-- Calling global function from module via window !!! -->
                     <button onclick="window.generateArchitecture()" id="ai-btn"
@@ -430,6 +431,7 @@
                                 <textarea name="message" id="message" rows="4" required maxlength="500"
                                     class="w-full bg-slate-900 border border-slate-700 rounded-md px-4 py-2 text-white placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
                                     placeholder="Tell me about your infrastructure needs..."></textarea>
+                                <div class="text-right text-xs text-slate-600 mt-1"><span id="message-count">0</span>/500</div>
                             </div>
 
                             <button type="submit" id="submit-btn"
