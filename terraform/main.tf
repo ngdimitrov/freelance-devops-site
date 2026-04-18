@@ -10,6 +10,8 @@ terraform {
     bucket = "nikolaydimitrov-terraform-state-bucket"
     key    = "prod/terraform.tfstate"
     region = "eu-north-1"
+    use_lockfile = true 
+    encrypt = true
   }
 }
 
