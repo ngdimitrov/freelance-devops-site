@@ -13,13 +13,13 @@ All AWS resources are provisioned and managed using **Terraform**, following bes
 
 
 ### Terraform manages:
-*  Route 53:** Hosted zone and DNS records.
-*  Amazon S3:** Bucket configured for static website hosting.
-*  Amazon CloudFront:** Content delivery distribution with mandatory HTTPS.
-*  AWS API Gateway:** HTTP API acting as the entry point.
-*  AWS Lambda:** Serverless functions (Node.js) for backend logic.
-*  IAM & Security:** Roles with least-privilege permissions and environment variables for secure secret injection.
-*  Protection:** Throttling, timeouts, and API protection settings.
+* **Route 53:** Hosted zone and DNS records.
+* **Amazon S3:** Bucket configured for static website hosting.
+* **Amazon CloudFront:** Content delivery distribution with mandatory HTTPS.
+* **AWS API Gateway:** HTTP API acting as the entry point.
+* **AWS Lambda:** Serverless functions (Node.js) for backend logic.
+* **IAM & Security:** Roles with least-privilege permissions, OIDC trust with maximum session duration of 1 hour, and environment variables for secure secret injection.
+* **Protection:** Throttling, timeouts, and API protection settings.
 
 ### State Management:
 * **Remote Storage:** Terraform state is stored securely in **Amazon S3**.
@@ -53,5 +53,6 @@ The project uses **GitHub Actions** to implement an automated CI/CD pipeline tri
 ### 🔐 Authentication & Security:
 * **Secure Access:** AWS access is handled via **GitHub Secrets** and IAM roles.
 * **No Hardcoding:** Zero AWS credentials are hardcoded in the repository, maintaining high security standards.
+* **OIDC Maximum session duration: 1 hour** — IAM users switching roles in the console are granted a role session duration up to this value.
 
 ---
