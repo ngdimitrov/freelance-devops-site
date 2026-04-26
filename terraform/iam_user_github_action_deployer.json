@@ -1,39 +1,91 @@
 {
-    "Version": "2012-10-17",
-    "Statement": [
-        {
-    "Effect": "Allow",
-    "Action": [
-        "iam:GetRolePolicy",        
-        "iam:ListRolePolicies",
-        "iam:ListInstanceProfilesForRole",
-        "iam:DeleteRolePolicy",
-        "route53:GetChange",
-        "iam:ListAttachedRolePolicies",
-        "iam:ListRolePolicies",
-        "iam:GetRole",
-        "acm:ListTagsForCertificate",
-        "route53:ListTagsForResource",
-        "acm:DescribeCertificate",
-        "acm:GetCertificate",
-        "acm:ListCertificates",
-        "route53:GetHostedZone",
-        "route53:ListHostedZones",
-        "route53:ListResourceRecordSets",
-        "route53:ChangeResourceRecordSets",
-        "s3:*",
-        "lambda:*",
-        "apigateway:*",
-        "cloudfront:*",
-        "iam:CreateRole",
-        "iam:DeleteRole",
-        "iam:PutRolePolicy",
-        "iam:AttachRolePolicy",
-        "iam:DetachRolePolicy",
-        "iam:PassRole",
-        "kms:Decrypt"
-    ],
-    "Resource": "*"
-}
-    ]
+	"Version": "2012-10-17",
+	"Statement": [
+		{
+			"Sid": "ManageS3Website",
+			"Effect": "Allow",
+			"Action": "s3:*",
+			"Resource": [
+				"arn:aws:s3:::nikolaydimitrov.dev-frontend",
+				"arn:aws:s3:::nikolaydimitrov.dev-frontend/*",
+				"arn:aws:s3:::nikolaydimitrov-terraform-state-bucket",
+				"arn:aws:s3:::nikolaydimitrov-terraform-state-bucket/*"
+			]
+		},
+		{
+			"Sid": "ManageLambdaAndApiGateway",
+			"Effect": "Allow",
+			"Action": [
+				"lambda:*",
+				"apigateway:*"
+			],
+			"Resource": [
+				"arn:aws:lambda:*:000000000000:function:geminiChatFunction",
+				"arn:aws:lambda:*:000000000000:function:sendEmailFunction",
+				"arn:aws:apigateway:*::/apis/*",
+				"arn:aws:apigateway:*::/restapis/*"
+			]
+		},
+		{
+			"Sid": "ManageCloudFront",
+			"Effect": "Allow",
+			"Action": "cloudfront:*",
+			"Resource": [
+				"arn:aws:cloudfront::000000000000:distribution/E2XZPLP9E3TCRM",
+				"arn:aws:cloudfront::000000000000:origin-access-control/*"
+			]
+		},
+		{
+			"Sid": "ManageSpecificIAMRoles",
+			"Effect": "Allow",
+			"Action": [
+				"iam:GetRole",
+				"iam:CreateRole",
+				"iam:DeleteRole",
+				"iam:PutRolePolicy",
+				"iam:AttachRolePolicy",
+				"iam:DetachRolePolicy",
+				"iam:GetRolePolicy",
+				"iam:ListRolePolicies",
+				"iam:DeleteRolePolicy",
+				"iam:ListAttachedRolePolicies",
+				"iam:ListInstanceProfilesForRole",
+				"iam:PassRole"
+			],
+			"Resource": [
+				"arn:aws:iam::000000000000:role/GitHubActionsWorkflowRole",
+				"arn:aws:iam::000000000000:role/serverless_lambda_role"
+			]
+		},
+		{
+			"Sid": "ManageRoute53AndACM",
+			"Effect": "Allow",
+			"Action": [
+				"route53:GetChange",
+				"route53:ChangeResourceRecordSets",
+				"route53:ListResourceRecordSets",
+				"route53:ListTagsForResource",
+				"acm:ListTagsForCertificate",
+				"acm:DescribeCertificate",
+				"acm:GetCertificate",
+				"kms:Decrypt"
+			],
+			"Resource": [
+				"arn:aws:route53:::hostedzone/Z079013913IFJAX1QCJ32",
+				"arn:aws:route53:::change/*",
+				"arn:aws:acm:*:000000000000:certificate/*",
+				"arn:aws:kms:*:000000000000:key/*"
+			]
+		},
+		{
+			"Sid": "AllowGlobalReadActions",
+			"Effect": "Allow",
+			"Action": [
+				"route53:ListHostedZones",
+				"route53:GetHostedZone",
+				"acm:ListCertificates"
+			],
+			"Resource": "*"
+		}
+	]
 }
