@@ -110,7 +110,11 @@
         "iam:DeleteRolePolicy",
         "iam:ListAttachedRolePolicies",
         "iam:ListInstanceProfilesForRole",
-        "iam:PassRole"
+        "iam:PassRole",
+        "iam:UpdateAssumeRolePolicy",
+        "iam:TagRole",
+        "iam:UntagRole",
+        "iam:ListRoleTags"
       ],
       "Resource": [
         "arn:aws:iam::000000000000:role/GitHubActionsWorkflowRole",
@@ -137,6 +141,28 @@
         "arn:aws:route53:::change/*",
         "arn:aws:acm:*:000000000000:certificate/*",
         "arn:aws:kms:*:000000000000:key/*"
+      ]
+    },
+    {
+      "Sid": "ManageLambdaLogGroups",
+      "Effect": "Allow",
+      "Action": [
+        "logs:CreateLogGroup",
+        "logs:DeleteLogGroup",
+        "logs:PutRetentionPolicy",
+        "logs:DescribeLogGroups",
+        "logs:ListTagsForResource",
+        "logs:ListTagsLogGroup",
+        "logs:TagLogGroup",
+        "logs:UntagLogGroup",
+        "logs:TagResource",
+        "logs:UntagResource"
+      ],
+      "Resource": [
+        "arn:aws:logs:eu-north-1:000000000000:log-group:/aws/lambda/geminiChatFunction",
+        "arn:aws:logs:eu-north-1:000000000000:log-group:/aws/lambda/geminiChatFunction:*",
+        "arn:aws:logs:eu-north-1:000000000000:log-group:/aws/lambda/sendEmailFunction",
+        "arn:aws:logs:eu-north-1:000000000000:log-group:/aws/lambda/sendEmailFunction:*"
       ]
     },
     {
