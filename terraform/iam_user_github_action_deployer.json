@@ -61,7 +61,22 @@
       "Sid": "ManageLambdaAndApiGateway",
       "Effect": "Allow",
       "Action": [
-        "lambda:*",
+        "lambda:CreateFunction",
+        "lambda:DeleteFunction",
+        "lambda:GetFunction",
+        "lambda:GetFunctionConfiguration",
+        "lambda:UpdateFunctionCode",
+        "lambda:UpdateFunctionConfiguration",
+        "lambda:AddPermission",
+        "lambda:RemovePermission",
+        "lambda:GetPolicy",
+        "lambda:ListVersionsByFunction",
+        "lambda:PublishVersion",
+        "lambda:TagResource",
+        "lambda:UntagResource",
+        "lambda:ListTags",
+        "lambda:PutFunctionEventInvokeConfig",
+        "lambda:GetFunctionEventInvokeConfig",
         "apigateway:*"
       ],
       "Resource": [
@@ -113,7 +128,9 @@
         "acm:ListTagsForCertificate",
         "acm:DescribeCertificate",
         "acm:GetCertificate",
-        "kms:Decrypt"
+        "kms:Decrypt",
+        "kms:DescribeKey",
+        "kms:CreateGrant"
       ],
       "Resource": [
         "arn:aws:route53:::hostedzone/Z079013913IFJAX1QCJ32",

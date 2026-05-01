@@ -38,6 +38,16 @@ resource "aws_iam_role_policy_attachment" "lambda_logs" {
   policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
 }
 
+resource "aws_cloudwatch_log_group" "gemini_api" {
+  name              = "/aws/lambda/geminiChatFunction"
+  retention_in_days = 30
+}
+
+resource "aws_cloudwatch_log_group" "resend_api" {
+  name              = "/aws/lambda/sendEmailFunction"
+  retention_in_days = 30
+}
+
 resource "aws_lambda_function" "gemini_api" {
   filename      = "../gemini.zip"
   function_name = "geminiChatFunction"
@@ -45,6 +55,7 @@ resource "aws_lambda_function" "gemini_api" {
   handler       = "index.handler"
   runtime       = "nodejs22.x"
   timeout       = 20
+  kms_key_arn   = var.kms_key_arn
 
   source_code_hash = filebase64sha256("../gemini.zip")
 
@@ -62,6 +73,7 @@ resource "aws_lambda_function" "resend_api" {
   handler       = "index.handler"
   runtime       = "nodejs22.x"
   timeout       = 3
+  kms_key_arn   = var.kms_key_arn
 
   source_code_hash = filebase64sha256("../resend.zip")
 

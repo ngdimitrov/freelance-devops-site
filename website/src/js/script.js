@@ -65,8 +65,12 @@ async function generateArchitecture() {
         }
 
         const rawText = data.candidates[0].content.parts[0].text;
-        
-        const formattedText = rawText.replace(/\*\*(.*?)\*\*/g, '<span class="text-indigo-400 font-bold">$1</span>');
+
+        const escaped = rawText
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;');
+        const formattedText = escaped.replace(/\*\*(.*?)\*\*/g, '<span class="text-indigo-400 font-bold">$1</span>');
 
         resultText.innerHTML = formattedText;
         resultDiv.classList.remove('hidden');

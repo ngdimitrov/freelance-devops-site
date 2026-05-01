@@ -1,4 +1,6 @@
 terraform {
+  required_version = ">= 1.10"
+
   required_providers {
     aws = {
       source  = "hashicorp/aws"
@@ -7,11 +9,11 @@ terraform {
   }
 
   backend "s3" {
-    bucket = "nikolaydimitrov-terraform-state-bucket"
-    key    = "prod/terraform.tfstate"
-    region = "eu-north-1"
-    use_lockfile = true 
-    encrypt = true
+    bucket       = "nikolaydimitrov-terraform-state-bucket"
+    key          = "prod/terraform.tfstate"
+    region       = "eu-north-1"
+    use_lockfile = true
+    encrypt      = true
   }
 }
 
@@ -28,10 +30,11 @@ resource "aws_s3_bucket" "website_bucket" {
   bucket = "nikolaydimitrov.dev-frontend"
 }
 
-resource "aws_s3_bucket_website_configuration" "website" {
+resource "aws_s3_bucket_public_access_block" "website_bucket" {
   bucket = aws_s3_bucket.website_bucket.id
 
-  index_document {
-    suffix = "index.html"
-  }
+  block_public_acls       = true
+  block_public_policy     = true
+  ignore_public_acls      = true
+  restrict_public_buckets = true
 }

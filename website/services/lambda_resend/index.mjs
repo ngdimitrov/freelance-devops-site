@@ -14,6 +14,13 @@ export const handler = async (event) => {
     const body = JSON.parse(event.body);
     const { name, email, message } = body;
 
+    const escHtml = s => String(s)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;');
+    const safeName = String(name).replace(/[\r\n]/g, '');
+
     const response = await fetch('https://api.resend.com/emails', {
       method: 'POST',
       headers: {
@@ -23,11 +30,11 @@ export const handler = async (event) => {
       body: JSON.stringify({
         from: 'Portfolio Contact <info@nikolaydimitrov.dev>',
         to: ['contact@example.com'],
-        subject: `New Message from ${name}`,
+        subject: `New Message from ${safeName}`,
         html: `
-                    <p><strong>Name:</strong> ${name}</p>
-                    <p><strong>Email:</strong> ${email}</p>
-                    <p><strong>Message:</strong> ${message}</p>
+                    <p><strong>Name:</strong> ${escHtml(name)}</p>
+                    <p><strong>Email:</strong> ${escHtml(email)}</p>
+                    <p><strong>Message:</strong> ${escHtml(message)}</p>
                 `,
       }),
     });

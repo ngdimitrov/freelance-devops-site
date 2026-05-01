@@ -1,5 +1,7 @@
 FROM node:24-alpine AS builder
 
+RUN apk upgrade --no-cache
+
 WORKDIR /app
 
 COPY package*.json ./
@@ -11,6 +13,8 @@ RUN npm run build
 
 
 FROM node:24-alpine AS runner
+
+RUN apk upgrade --no-cache
 
 WORKDIR /app
 

@@ -21,6 +21,12 @@ app.use(express.json());
 // Init Resend
 const resend = new Resend(process.env.RESEND_API_KEY);
 
+const escHtml = s => String(s)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
+
 // API endpoint
 app.post('/api/contact', async (req, res) => {
     const { name, email, message } = req.body;
@@ -29,18 +35,20 @@ app.post('/api/contact', async (req, res) => {
         return res.status(400).json({ error: 'Missing fields' });
     }
 
+    const safeName = String(name).replace(/[\r\n]/g, '');
+
     try {
         const data = await resend.emails.send({
             from: 'Portfolio Contact <onboarding@resend.dev>',
             to: ['contact@example.com'],
-            subject: `New Contact from ${name}`,
+            subject: `New Contact from ${safeName}`,
             html: `
                 <h3>New message from DevOps Portfolio</h3>
-                <p><strong>Name:</strong> ${name}</p>
-                <p><strong>Email:</strong> ${email}</p>
+                <p><strong>Name:</strong> ${escHtml(name)}</p>
+                <p><strong>Email:</strong> ${escHtml(email)}</p>
                 <p><strong>Message:</strong></p>
                 <blockquote style="background: #f9f9f9; padding: 10px; border-left: 5px solid #ccc;">
-                    ${message}
+                    ${escHtml(message)}
                 </blockquote>
             `
         });
