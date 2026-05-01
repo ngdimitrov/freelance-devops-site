@@ -32,7 +32,8 @@
         "s3:GetBucketObjectLockConfiguration",
         "s3:GetLifecycleConfiguration",
         "s3:GetBucketTagging",
-        "s3:GetAccelerateConfiguration"
+        "s3:GetAccelerateConfiguration",
+        "s3:GetReplicationConfiguration"
       ],
       "Resource": [
         "arn:aws:s3:::nikolaydimitrov.dev-frontend",
