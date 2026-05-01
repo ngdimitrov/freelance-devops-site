@@ -4,6 +4,14 @@ on:
   push:
     branches:
       - develop
+    paths:
+      - 'website/**'
+      - 'terraform/**'
+      - '.github/workflows/deploy.yml'
+
+concurrency:
+  group: deploy-production
+  cancel-in-progress: true
 
 permissions:
   id-token: write
@@ -11,7 +19,12 @@ permissions:
 
 jobs:
   deploy:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    env:
+      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+      TF_VAR_resend_api_key: ${{ secrets.RESEND_API_KEY }}
+      TF_VAR_gemini_api_key: ${{ secrets.GEMINI_API_KEY }}
 
     steps:
       - name: Checkout Code
@@ -33,13 +46,13 @@ jobs:
       - name: Prepare Lambda Functions
         run: |
           cd website/services/lambda_gemini && zip -r ../../../gemini.zip . && cd ../../..
-          cd website/services/lambda_resend && zip -r ../../../resend.zip . && cd ../../..    
+          cd website/services/lambda_resend && zip -r ../../../resend.zip . && cd ../../..
 
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
           role-to-assume: arn:aws:iam::000000000000:role/GitHubActionsWorkflowRole
-          aws-region: ${{ secrets.AWS_REGION }}
+          aws-region: eu-north-1
 
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
@@ -51,9 +64,7 @@ jobs:
         working-directory: ./terraform
         run: |
           terraform init
-          terraform apply -auto-approve \
-            -var="resend_api_key=${{ secrets.RESEND_API_KEY }}" \
-            -var="gemini_api_key=${{ secrets.GEMINI_API_KEY }}"
+          terraform apply -auto-approve
 
       - name: Get Terraform Outputs
         id: outputs
