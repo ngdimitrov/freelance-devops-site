@@ -160,7 +160,6 @@
         "logs:CreateLogGroup",
         "logs:DeleteLogGroup",
         "logs:PutRetentionPolicy",
-        "logs:DescribeLogGroups",
         "logs:ListTagsForResource",
         "logs:ListTagsLogGroup",
         "logs:TagLogGroup",
@@ -183,7 +182,8 @@
         "route53:GetHostedZone",
         "acm:ListCertificates",
         "iam:ListOpenIDConnectProviders",
-        "iam:GetOpenIDConnectProvider"
+        "iam:GetOpenIDConnectProvider",
+        "logs:DescribeLogGroups"
       ],
       "Resource": "*"
     }
