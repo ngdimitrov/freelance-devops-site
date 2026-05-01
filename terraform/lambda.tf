@@ -38,9 +38,19 @@ resource "aws_iam_role_policy_attachment" "lambda_logs" {
   policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
 }
 
+import {
+  to = aws_cloudwatch_log_group.gemini_api
+  id = "/aws/lambda/geminiChatFunction"
+}
+
 resource "aws_cloudwatch_log_group" "gemini_api" {
   name              = "/aws/lambda/geminiChatFunction"
   retention_in_days = 30
+}
+
+import {
+  to = aws_cloudwatch_log_group.resend_api
+  id = "/aws/lambda/sendEmailFunction"
 }
 
 resource "aws_cloudwatch_log_group" "resend_api" {
