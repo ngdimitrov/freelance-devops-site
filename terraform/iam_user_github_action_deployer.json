@@ -24,7 +24,15 @@
         "s3:PutBucketAcl",
         "s3:GetBucketAcl",
         "s3:PutBucketCORS",
-        "s3:GetBucketCORS"
+        "s3:GetBucketCORS",
+        "s3:GetBucketVersioning",
+        "s3:GetEncryptionConfiguration",
+        "s3:GetBucketLogging",
+        "s3:GetBucketRequestPayment",
+        "s3:GetBucketObjectLockConfiguration",
+        "s3:GetLifecycleConfiguration",
+        "s3:GetBucketTagging",
+        "s3:GetAccelerateConfiguration"
       ],
       "Resource": [
         "arn:aws:s3:::nikolaydimitrov.dev-frontend",
@@ -77,6 +85,7 @@
         "lambda:ListTags",
         "lambda:PutFunctionEventInvokeConfig",
         "lambda:GetFunctionEventInvokeConfig",
+        "lambda:GetFunctionCodeSigningConfig",
         "apigateway:*"
       ],
       "Resource": [
@@ -171,7 +180,9 @@
       "Action": [
         "route53:ListHostedZones",
         "route53:GetHostedZone",
-        "acm:ListCertificates"
+        "acm:ListCertificates",
+        "iam:ListOpenIDConnectProviders",
+        "iam:GetOpenIDConnectProvider"
       ],
       "Resource": "*"
     }
