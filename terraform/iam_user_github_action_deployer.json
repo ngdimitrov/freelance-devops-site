@@ -97,15 +97,37 @@
       ]
     },
     {
-      "Sid": "ManageCloudFront",
+      "Sid": "ManageCloudFrontDistribution",
       "Effect": "Allow",
       "Action": "cloudfront:*",
-      "Resource": [
-        "arn:aws:cloudfront::000000000000:distribution/E2XZPLP9E3TCRM",
-        "arn:aws:cloudfront::000000000000:origin-access-control/*",
-        "arn:aws:cloudfront::000000000000:function/*",
-        "arn:aws:cloudfront::000000000000:response-headers-policy/*"
-      ]
+      "Resource": "arn:aws:cloudfront::000000000000:distribution/E2XZPLP9E3TCRM"
+    },
+    {
+      "Sid": "ManageCloudFrontGlobal",
+      "Effect": "Allow",
+      "Action": [
+        "cloudfront:CreateFunction",
+        "cloudfront:DeleteFunction",
+        "cloudfront:DescribeFunction",
+        "cloudfront:GetFunction",
+        "cloudfront:ListFunctions",
+        "cloudfront:PublishFunction",
+        "cloudfront:UpdateFunction",
+        "cloudfront:TagResource",
+        "cloudfront:UntagResource",
+        "cloudfront:ListTagsForResource",
+        "cloudfront:CreateResponseHeadersPolicy",
+        "cloudfront:DeleteResponseHeadersPolicy",
+        "cloudfront:GetResponseHeadersPolicy",
+        "cloudfront:ListResponseHeadersPolicies",
+        "cloudfront:UpdateResponseHeadersPolicy",
+        "cloudfront:CreateOriginAccessControl",
+        "cloudfront:DeleteOriginAccessControl",
+        "cloudfront:GetOriginAccessControl",
+        "cloudfront:ListOriginAccessControls",
+        "cloudfront:UpdateOriginAccessControl"
+      ],
+      "Resource": "*"
     },
     {
       "Sid": "ManageSpecificIAMRoles",
