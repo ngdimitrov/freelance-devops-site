@@ -59,6 +59,10 @@ resource "aws_cloudwatch_log_group" "resend_api" {
 }
 
 resource "aws_lambda_function" "gemini_api" {
+  # Ensures the deployer policy (granting lambda:PutFunctionConcurrency) is
+  # applied before reserved concurrency is set, avoiding an IAM-propagation race.
+  depends_on = [aws_iam_role_policy.github_actions_deployer]
+
   filename      = "../gemini.zip"
   function_name = "geminiChatFunction"
   role          = aws_iam_role.lambda_role.arn
@@ -79,6 +83,8 @@ resource "aws_lambda_function" "gemini_api" {
 }
 
 resource "aws_lambda_function" "resend_api" {
+  depends_on = [aws_iam_role_policy.github_actions_deployer]
+
   filename      = "../resend.zip"
   function_name = "sendEmailFunction"
   role          = aws_iam_role.lambda_role.arn

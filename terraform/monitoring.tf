@@ -1,6 +1,9 @@
 # --- Alerting channel -------------------------------------------------------
 
 resource "aws_sns_topic" "alerts" {
+  # Deployer policy must grant SNS/CloudWatch perms before these are created.
+  depends_on = [aws_iam_role_policy.github_actions_deployer]
+
   name = "site-ops-alerts"
 }
 
@@ -66,6 +69,8 @@ resource "aws_cloudwatch_metric_alarm" "lambda_throttles" {
 # --- Cost guardrail ---------------------------------------------------------
 
 resource "aws_budgets_budget" "monthly" {
+  depends_on = [aws_iam_role_policy.github_actions_deployer]
+
   name         = "monthly-cost-budget"
   budget_type  = "COST"
   limit_amount = tostring(var.monthly_budget_usd)
