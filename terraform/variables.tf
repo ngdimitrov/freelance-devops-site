@@ -28,14 +28,18 @@ variable "monthly_budget_usd" {
   default     = 10
 }
 
+# -1 = unreserved (no reservation). Reserving requires the account's total
+# Lambda concurrency quota to be raised above 10 (request a Service Quota
+# increase for "Concurrent executions"), otherwise PutFunctionConcurrency
+# fails because unreserved must stay >= 10. Set to e.g. 5 once raised.
 variable "gemini_reserved_concurrency" {
-  description = "Reserved concurrent executions for the Gemini Lambda (caps cost-abuse blast radius)"
+  description = "Reserved concurrent executions for the Gemini Lambda; -1 disables (account quota too low)"
   type        = number
-  default     = 5
+  default     = -1
 }
 
 variable "resend_reserved_concurrency" {
-  description = "Reserved concurrent executions for the Resend Lambda"
+  description = "Reserved concurrent executions for the Resend Lambda; -1 disables (account quota too low)"
   type        = number
-  default     = 5
+  default     = -1
 }

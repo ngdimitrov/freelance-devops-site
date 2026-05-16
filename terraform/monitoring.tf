@@ -68,6 +68,13 @@ resource "aws_cloudwatch_metric_alarm" "lambda_throttles" {
 
 # --- Cost guardrail ---------------------------------------------------------
 
+# The budget was created by a prior partial apply (tag read failed after
+# CreateBudget succeeded), so adopt the existing one instead of recreating.
+import {
+  to = aws_budgets_budget.monthly
+  id = "000000000000:monthly-cost-budget"
+}
+
 resource "aws_budgets_budget" "monthly" {
   depends_on = [aws_iam_role_policy.github_actions_deployer]
 
