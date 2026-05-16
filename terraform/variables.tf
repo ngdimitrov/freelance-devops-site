@@ -15,3 +15,27 @@ variable "resend_api_key" {
   type        = string
   sensitive   = true
 }
+
+variable "alert_email" {
+  description = "Email address for operational alerts (Lambda errors, budget)"
+  type        = string
+  default     = "contact@example.com"
+}
+
+variable "monthly_budget_usd" {
+  description = "Monthly AWS cost budget threshold in USD; alerts at 80% and 100%"
+  type        = number
+  default     = 10
+}
+
+variable "gemini_reserved_concurrency" {
+  description = "Reserved concurrent executions for the Gemini Lambda (caps cost-abuse blast radius)"
+  type        = number
+  default     = 5
+}
+
+variable "resend_reserved_concurrency" {
+  description = "Reserved concurrent executions for the Resend Lambda"
+  type        = number
+  default     = 5
+}

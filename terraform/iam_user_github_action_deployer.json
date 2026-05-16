@@ -87,6 +87,9 @@
         "lambda:PutFunctionEventInvokeConfig",
         "lambda:GetFunctionEventInvokeConfig",
         "lambda:GetFunctionCodeSigningConfig",
+        "lambda:PutFunctionConcurrency",
+        "lambda:DeleteFunctionConcurrency",
+        "lambda:GetFunctionConcurrency",
         "apigateway:*"
       ],
       "Resource": [
@@ -209,6 +212,51 @@
       ]
     },
     {
+      "Sid": "ManageCloudWatchAlarms",
+      "Effect": "Allow",
+      "Action": [
+        "cloudwatch:PutMetricAlarm",
+        "cloudwatch:DeleteAlarms",
+        "cloudwatch:EnableAlarmActions",
+        "cloudwatch:DisableAlarmActions",
+        "cloudwatch:ListTagsForResource",
+        "cloudwatch:TagResource",
+        "cloudwatch:UntagResource"
+      ],
+      "Resource": "arn:aws:cloudwatch:eu-north-1:000000000000:alarm:*"
+    },
+    {
+      "Sid": "ManageAlertsSnsTopic",
+      "Effect": "Allow",
+      "Action": [
+        "sns:CreateTopic",
+        "sns:DeleteTopic",
+        "sns:GetTopicAttributes",
+        "sns:SetTopicAttributes",
+        "sns:Subscribe",
+        "sns:Unsubscribe",
+        "sns:GetSubscriptionAttributes",
+        "sns:SetSubscriptionAttributes",
+        "sns:ListSubscriptionsByTopic",
+        "sns:ListTagsForResource",
+        "sns:TagResource",
+        "sns:UntagResource"
+      ],
+      "Resource": [
+        "arn:aws:sns:eu-north-1:000000000000:site-ops-alerts",
+        "arn:aws:sns:eu-north-1:000000000000:site-ops-alerts:*"
+      ]
+    },
+    {
+      "Sid": "ManageCostBudget",
+      "Effect": "Allow",
+      "Action": [
+        "budgets:ViewBudget",
+        "budgets:ModifyBudget"
+      ],
+      "Resource": "arn:aws:budgets::000000000000:budget/monthly-cost-budget"
+    },
+    {
       "Sid": "AllowGlobalReadActions",
       "Effect": "Allow",
       "Action": [
@@ -217,7 +265,8 @@
         "acm:ListCertificates",
         "iam:ListOpenIDConnectProviders",
         "iam:GetOpenIDConnectProvider",
-        "logs:DescribeLogGroups"
+        "logs:DescribeLogGroups",
+        "cloudwatch:DescribeAlarms"
       ],
       "Resource": "*"
     }

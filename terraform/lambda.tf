@@ -67,6 +67,8 @@ resource "aws_lambda_function" "gemini_api" {
   timeout       = 20
   kms_key_arn   = var.kms_key_arn
 
+  reserved_concurrent_executions = var.gemini_reserved_concurrency
+
   source_code_hash = filebase64sha256("../gemini.zip")
 
   environment {
@@ -84,6 +86,8 @@ resource "aws_lambda_function" "resend_api" {
   runtime       = "nodejs22.x"
   timeout       = 3
   kms_key_arn   = var.kms_key_arn
+
+  reserved_concurrent_executions = var.resend_reserved_concurrency
 
   source_code_hash = filebase64sha256("../resend.zip")
 
