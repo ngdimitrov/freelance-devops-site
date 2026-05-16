@@ -21,6 +21,9 @@ jobs:
   deploy:
     runs-on: ubuntu-24.04
     timeout-minutes: 10
+    # Requires the "production" environment in repo settings; add required
+    # reviewers there to gate apply behind a manual approval.
+    environment: production
     env:
       FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
       TF_VAR_resend_api_key: ${{ secrets.RESEND_API_KEY }}
@@ -59,12 +62,26 @@ jobs:
         with:
           terraform_wrapper: false
 
+      - name: Terraform Init
+        working-directory: ./terraform
+        run: terraform init
+
+      - name: Terraform Format
+        working-directory: ./terraform
+        run: terraform fmt -recursive
+
+      - name: Terraform Validate
+        working-directory: ./terraform
+        run: terraform validate
+
+      - name: Terraform Plan
+        working-directory: ./terraform
+        run: terraform plan -out=tfplan
+
       - name: Terraform Apply
         id: tf
         working-directory: ./terraform
-        run: |
-          terraform init
-          terraform apply -auto-approve
+        run: terraform apply -auto-approve tfplan
 
       - name: Get Terraform Outputs
         id: outputs

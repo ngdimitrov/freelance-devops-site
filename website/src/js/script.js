@@ -59,12 +59,15 @@ async function generateArchitecture() {
         }
 
         const data = await response.json();
-        
+
         if (data.error) {
             throw new Error(data.error);
         }
 
-        const rawText = data.candidates[0].content.parts[0].text;
+        const rawText = data?.candidates?.[0]?.content?.parts?.[0]?.text;
+        if (!rawText) {
+            throw new Error('Empty response');
+        }
 
         const escaped = rawText
             .replace(/&/g, '&amp;')
@@ -120,7 +123,8 @@ if (contactForm) {
         const formData = {
             name: document.getElementById('name').value,
             email: document.getElementById('email').value,
-            message: document.getElementById('message').value
+            message: document.getElementById('message').value,
+            website: honeypot ? honeypot.value : ''
         };
 
         try {

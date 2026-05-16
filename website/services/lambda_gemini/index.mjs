@@ -1,31 +1,48 @@
+const ALLOWED_ORIGIN = "https://nikolaydimitrov.dev";
+
+const CORS_HEADERS = {
+  "Access-Control-Allow-Origin": ALLOWED_ORIGIN,
+  "Access-Control-Allow-Headers": "Content-Type",
+  "Access-Control-Allow-Methods": "OPTIONS,POST",
+  "Content-Type": "application/json"
+};
+
+const MAX_PROMPT_LENGTH = 1000;
+
+const reply = (statusCode, payload) => ({
+  statusCode,
+  headers: CORS_HEADERS,
+  body: JSON.stringify(payload)
+});
+
 export const handler = async (event) => {
   const apiKey = process.env.GEMINI_API_KEY;
 
   if (!apiKey) {
-    return {
-      statusCode: 500,
-      body: JSON.stringify({ error: 'Server configuration error: Missing API Key' })
-    };
+    console.error("Missing GEMINI_API_KEY");
+    return reply(500, { error: 'Server configuration error' });
   }
 
   if (!event.body) {
-    return {
-      statusCode: 400,
-      body: JSON.stringify({ error: 'Missing body' })
-    };
+    return reply(400, { error: 'Missing body' });
   }
 
+  let prompt;
   try {
-    const { prompt } = JSON.parse(event.body);
+    ({ prompt } = JSON.parse(event.body));
+  } catch {
+    return reply(400, { error: 'Invalid JSON' });
+  }
 
-    if (!prompt) {
-      return {
-        statusCode: 400,
-        body: JSON.stringify({ error: 'Missing prompt' })
-      };
-    }
+  if (!prompt || typeof prompt !== 'string') {
+    return reply(400, { error: 'Missing prompt' });
+  }
 
-    const systemPrompt = `You are the AI assistant on Nikolay Dimitrov's DevOps portfolio site. Nikolay is a Senior AWS & DevOps Engineer specializing in cloud infrastructure, CI/CD, and Infrastructure as Code.
+  if (prompt.length > MAX_PROMPT_LENGTH) {
+    return reply(400, { error: 'Prompt too long' });
+  }
+
+  const systemPrompt = `You are the AI assistant on Nikolay Dimitrov's DevOps portfolio site. Nikolay is a Senior AWS & DevOps Engineer specializing in cloud infrastructure, CI/CD, and Infrastructure as Code.
 
 ROLE: Provide high-level infrastructure strategies based on the user's description. You are an architect advisor — suggest solutions, not full implementations.
 
@@ -50,6 +67,7 @@ BOUNDARIES:
 - Never generate code snippets — only architectural guidance.
 - Never impersonate Nikolay directly. You are his AI assistant.`;
 
+  try {
     const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -62,26 +80,13 @@ BOUNDARIES:
     const data = await response.json();
 
     if (!response.ok) {
-      throw new Error(data.error?.message || 'Google API Error');
+      console.error("Google API error:", response.status, data?.error?.message);
+      return reply(502, { error: 'Failed to generate content' });
     }
 
-    return {
-      statusCode: 200,
-      headers: {
-        "Access-Control-Allow-Origin": "*",
-        "Access-Control-Allow-Headers": "Content-Type",
-        "Access-Control-Allow-Methods": "OPTIONS,POST",
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify(data)
-    };
-
+    return reply(200, data);
   } catch (error) {
     console.error("Gemini Error:", error);
-    return {
-      statusCode: 500,
-      headers: { "Access-Control-Allow-Origin": "*" },
-      body: JSON.stringify({ error: 'Failed to generate content', details: error.message })
-    };
+    return reply(500, { error: 'Failed to generate content' });
   }
 };

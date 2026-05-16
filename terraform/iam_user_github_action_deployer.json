@@ -102,7 +102,9 @@
       "Action": "cloudfront:*",
       "Resource": [
         "arn:aws:cloudfront::000000000000:distribution/E2XZPLP9E3TCRM",
-        "arn:aws:cloudfront::000000000000:origin-access-control/*"
+        "arn:aws:cloudfront::000000000000:origin-access-control/*",
+        "arn:aws:cloudfront::000000000000:function/*",
+        "arn:aws:cloudfront::000000000000:response-headers-policy/*"
       ]
     },
     {
@@ -120,7 +122,6 @@
         "iam:DeleteRolePolicy",
         "iam:ListAttachedRolePolicies",
         "iam:ListInstanceProfilesForRole",
-        "iam:PassRole",
         "iam:UpdateAssumeRolePolicy",
         "iam:TagRole",
         "iam:UntagRole",
@@ -130,6 +131,17 @@
         "arn:aws:iam::000000000000:role/GitHubActionsWorkflowRole",
         "arn:aws:iam::000000000000:role/serverless_lambda_role"
       ]
+    },
+    {
+      "Sid": "PassLambdaExecutionRole",
+      "Effect": "Allow",
+      "Action": "iam:PassRole",
+      "Resource": "arn:aws:iam::000000000000:role/serverless_lambda_role",
+      "Condition": {
+        "StringEquals": {
+          "iam:PassedToService": "lambda.amazonaws.com"
+        }
+      }
     },
     {
       "Sid": "ManageRoute53AndACM",

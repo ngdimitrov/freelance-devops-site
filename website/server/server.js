@@ -12,11 +12,24 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const app = express();
-const port = process.env.PORT;
+const port = process.env.PORT || 3000;
+const ALLOWED_ORIGIN = process.env.ALLOWED_ORIGIN || 'https://nikolaydimitrov.dev';
+
+const LIMITS = { name: 100, email: 254, message: 5000, prompt: 1000 };
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 // Middleware
-app.use(cors()); // allow FE to communicate with BE
-app.use(express.json());
+app.use(cors({ origin: ALLOWED_ORIGIN }));
+app.use(express.json({ limit: '16kb' }));
+
+// Baseline security headers (zero-dependency; mirrors helmet defaults we need)
+app.use((req, res, next) => {
+    res.setHeader('X-Content-Type-Options', 'nosniff');
+    res.setHeader('X-Frame-Options', 'DENY');
+    res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
+    res.setHeader('Strict-Transport-Security', 'max-age=63072000; includeSubDomains; preload');
+    next();
+});
 
 // Init Resend
 const resend = new Resend(process.env.RESEND_API_KEY);
@@ -25,22 +38,49 @@ const escHtml = s => String(s)
     .replace(/&/g, '&amp;')
     .replace(/</g, '&lt;')
     .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;');
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
 
-// API endpoint
+// Contact endpoint
 app.post('/api/contact', async (req, res) => {
-    const { name, email, message } = req.body;
+    const { name, email, message, website } = req.body;
+
+    // Server-side honeypot
+    if (website) {
+        return res.status(200).json({ success: true });
+    }
 
     if (!name || !email || !message) {
         return res.status(400).json({ error: 'Missing fields' });
     }
 
-    const safeName = String(name).replace(/[\r\n]/g, '');
+    if (
+        typeof name !== 'string' ||
+        typeof email !== 'string' ||
+        typeof message !== 'string'
+    ) {
+        return res.status(400).json({ error: 'Invalid field types' });
+    }
+
+    if (
+        name.length > LIMITS.name ||
+        email.length > LIMITS.email ||
+        message.length > LIMITS.message
+    ) {
+        return res.status(400).json({ error: 'Field too long' });
+    }
+
+    if (!EMAIL_RE.test(email)) {
+        return res.status(400).json({ error: 'Invalid email' });
+    }
+
+    const safeName = name.replace(/[\r\n]/g, '');
 
     try {
-        const data = await resend.emails.send({
-            from: 'Portfolio Contact <onboarding@resend.dev>',
+        await resend.emails.send({
+            from: 'Portfolio Contact <info@nikolaydimitrov.dev>',
             to: ['contact@example.com'],
+            replyTo: email,
             subject: `New Contact from ${safeName}`,
             html: `
                 <h3>New message from DevOps Portfolio</h3>
@@ -53,37 +93,29 @@ app.post('/api/contact', async (req, res) => {
             `
         });
 
-        res.status(200).json({ success: true, data });
+        res.status(200).json({ success: true });
     } catch (error) {
         console.error(error);
         res.status(500).json({ error: 'Internal Server Error' });
     }
 });
 
-
-app.use(express.static(path.join(__dirname, '../dist')));
-
-
-app.get('*', (req, res) => {
-    res.sendFile(path.join(__dirname, '../dist/index.html'));
-});
-
-app.listen(port, () => {
-    console.log(`Server running at http://localhost:${port}`);
-});
-
-
-// Gemini API endpoint
+// Gemini endpoint
 app.post('/api/generate', async (req, res) => {
     const { prompt } = req.body;
-    const apiKey = process.env.GEMINI_API_KEY; 
+    const apiKey = process.env.GEMINI_API_KEY;
 
     if (!apiKey) {
-        return res.status(500).json({ error: 'Server configuration error: Missing API Key' });
+        console.error('Missing GEMINI_API_KEY');
+        return res.status(500).json({ error: 'Server configuration error' });
     }
 
-    if (!prompt) {
+    if (!prompt || typeof prompt !== 'string') {
         return res.status(400).json({ error: 'Missing prompt' });
+    }
+
+    if (prompt.length > LIMITS.prompt) {
+        return res.status(400).json({ error: 'Prompt too long' });
     }
 
     const systemPrompt = `You are the AI assistant on Nikolay Dimitrov's DevOps portfolio site. Nikolay is a Senior AWS & DevOps Engineer specializing in cloud infrastructure, CI/CD, and Infrastructure as Code.
@@ -121,16 +153,27 @@ BOUNDARIES:
             })
         });
 
+        const data = await response.json();
+
         if (!response.ok) {
-            const errData = await response.json();
-            throw new Error(errData.error?.message || 'Google API Error');
+            console.error('Google API error:', response.status, data?.error?.message);
+            return res.status(502).json({ error: 'Failed to generate content' });
         }
 
-        const data = await response.json();
         res.json(data);
-
     } catch (error) {
-        console.error("Gemini Error:", error);
+        console.error('Gemini Error:', error);
         res.status(500).json({ error: 'Failed to generate content' });
     }
+});
+
+// Static assets + SPA fallback (registered after API routes)
+app.use(express.static(path.join(__dirname, '../dist')));
+
+app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, '../dist/index.html'));
+});
+
+app.listen(port, () => {
+    console.log(`Server running at http://localhost:${port}`);
 });
