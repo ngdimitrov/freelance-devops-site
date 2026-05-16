@@ -22,10 +22,15 @@ data "aws_iam_policy_document" "github_actions_assume" {
       values   = ["sts.amazonaws.com"]
     }
 
+    # Allows both the branch-ref subject (no environment) and the
+    # environment subject (when the workflow job sets environment: production).
     condition {
       test     = "StringLike"
       variable = "token.actions.githubusercontent.com:sub"
-      values   = ["repo:ngdimitrov/portfolio-devops-website:ref:refs/heads/develop"]
+      values = [
+        "repo:ngdimitrov/portfolio-devops-website:ref:refs/heads/develop",
+        "repo:ngdimitrov/portfolio-devops-website:environment:production",
+      ]
     }
   }
 }

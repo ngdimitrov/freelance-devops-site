@@ -21,9 +21,10 @@ jobs:
   deploy:
     runs-on: ubuntu-24.04
     timeout-minutes: 10
-    # Requires the "production" environment in repo settings; add required
-    # reviewers there to gate apply behind a manual approval.
-    environment: production
+    # NOTE: re-enable `environment: production` (for a manual approval gate)
+    # only AFTER the broadened trust policy in iam_github_actions.tf is applied.
+    # An environment changes the OIDC `sub` claim to
+    # repo:OWNER/REPO:environment:production, which the trust policy must allow.
     env:
       FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
       TF_VAR_resend_api_key: ${{ secrets.RESEND_API_KEY }}
