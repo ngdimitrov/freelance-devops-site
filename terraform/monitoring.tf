@@ -16,11 +16,10 @@ resource "aws_sns_topic_subscription" "alerts_email" {
 
 # --- IAM propagation barrier ------------------------------------------------
 
-# IAM is eventually consistent: a freshly-updated deployer policy is not
-# guaranteed effective the instant PutRolePolicy returns. Resources below
-# exercise newly-granted permissions immediately on create (CloudWatch
-# PutMetricAlarm, Budgets ListTagsForResource); the budget in particular
-# orphans on failure (re-run then hits DuplicateRecordException). Wait it out.
+# IAM is eventually consistent, so newly granted deployer permissions may not
+# be effective the instant the policy is applied. The resources gated on this
+# delay use those permissions immediately on creation; the brief wait ensures
+# propagation has completed before they run.
 resource "time_sleep" "wait_for_iam_propagation" {
   depends_on      = [aws_iam_role_policy.github_actions_deployer]
   create_duration = "30s"

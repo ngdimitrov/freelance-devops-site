@@ -5,7 +5,7 @@ import { fileURLToPath } from 'url';
 import { Resend } from 'resend';
 import dotenv from 'dotenv';
 
-//  .env environment variables
+// Load .env environment variables
 dotenv.config();
 
 const __filename = fileURLToPath(import.meta.url);
@@ -32,8 +32,14 @@ app.use((req, res, next) => {
     next();
 });
 
-// Init Resend
-const resend = new Resend(process.env.RESEND_API_KEY);
+// Resend SDK v4+ throws at construction if the key is missing, so create the
+// client lazily — a missing key fails only the contact request, not boot.
+let resendClient;
+const getResend = () => {
+    if (!process.env.RESEND_API_KEY) return null;
+    resendClient ??= new Resend(process.env.RESEND_API_KEY);
+    return resendClient;
+};
 
 const escHtml = s => String(s)
     .replace(/&/g, '&amp;')
@@ -46,8 +52,9 @@ const escHtml = s => String(s)
 app.post('/api/contact', async (req, res) => {
     const { name, email, message, website } = req.body;
 
-    if (!CONTACT_TO_EMAIL) {
-        console.error('Missing CONTACT_TO_EMAIL');
+    const resend = getResend();
+    if (!CONTACT_TO_EMAIL || !resend) {
+        console.error('Missing CONTACT_TO_EMAIL or RESEND_API_KEY');
         return res.status(500).json({ error: 'Server configuration error' });
     }
 
@@ -83,7 +90,7 @@ app.post('/api/contact', async (req, res) => {
     const safeName = name.replace(/[\r\n]/g, '');
 
     try {
-        await resend.emails.send({
+        const { error } = await resend.emails.send({
             from: 'Portfolio Contact <info@nikolaydimitrov.dev>',
             to: [CONTACT_TO_EMAIL],
             replyTo: email,
@@ -98,6 +105,12 @@ app.post('/api/contact', async (req, res) => {
                 </blockquote>
             `
         });
+
+        // resend v4+ returns { data, error } instead of throwing on API errors
+        if (error) {
+            console.error('Resend API error:', error);
+            return res.status(502).json({ error: 'Failed to send message' });
+        }
 
         res.status(200).json({ success: true });
     } catch (error) {
@@ -173,10 +186,12 @@ BOUNDARIES:
     }
 });
 
-// Static assets + SPA fallback (registered after API routes)
+// Static assets + SPA fallback (registered after API routes).
+// Final middleware instead of app.get('*') — Express 5 / path-to-regexp 8
+// no longer accepts a bare '*' string path.
 app.use(express.static(path.join(__dirname, '../dist')));
 
-app.get('*', (req, res) => {
+app.use((req, res) => {
     res.sendFile(path.join(__dirname, '../dist/index.html'));
 });
 

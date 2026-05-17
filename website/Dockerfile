@@ -1,4 +1,9 @@
-FROM node:24-alpine AS builder
+# Pinned by digest for reproducible builds (= node:22-alpine, Node 22.22.3 /
+# Alpine 3.23.4). `apk upgrade` below patches OS-package CVEs at build time;
+# bump this digest deliberately when a newer patched base is published.
+ARG NODE_IMAGE=node:22-alpine@sha256:968df39aedcea65eeb078fb336ed7191baf48f972b4479711397108be0966920
+
+FROM ${NODE_IMAGE} AS builder
 
 RUN apk upgrade --no-cache
 
@@ -12,7 +17,7 @@ COPY . .
 RUN npm run build
 
 
-FROM node:24-alpine AS runner
+FROM ${NODE_IMAGE} AS runner
 
 RUN apk upgrade --no-cache
 
@@ -27,7 +32,7 @@ RUN npm ci --omit=dev && npm cache clean --force
 
 
 COPY --from=builder --chown=node:node /app/dist ./dist
-COPY --from=builder --chown=node:node /app/server ./server 
+COPY --from=builder --chown=node:node /app/server ./server
 
 USER node
 

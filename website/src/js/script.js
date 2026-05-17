@@ -180,7 +180,7 @@ function launchConfetti() {
     }, 3000);
 }
 
-//  LEGAL MODAL
+// LEGAL MODAL
 const legalModal = document.getElementById('legal-modal');
 
 window.openLegalModal = (sectionId) => {

@@ -21,10 +21,9 @@ jobs:
   deploy:
     runs-on: ubuntu-24.04
     timeout-minutes: 10
-    # NOTE: re-enable `environment: production` (for a manual approval gate)
-    # only AFTER the broadened trust policy in iam_github_actions.tf is applied.
-    # An environment changes the OIDC `sub` claim to
-    # repo:OWNER/REPO:environment:production, which the trust policy must allow.
+    # Add `environment: production` here to gate deploys behind a manual
+    # approval. The OIDC trust policy already permits the resulting
+    # `environment:production` subject claim (see iam_github_actions.tf).
     env:
       FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
       TF_VAR_resend_api_key: ${{ secrets.RESEND_API_KEY }}
@@ -47,6 +46,13 @@ jobs:
         run: |
           npm ci
           npm run build
+
+      - name: Dependency Audit
+        working-directory: ./website
+        # Surfaces known high/critical advisories without blocking the deploy
+        # on transitive issues outside our control.
+        continue-on-error: true
+        run: npm audit --audit-level=high --omit=dev
 
       - name: Prepare Lambda Functions
         run: |
