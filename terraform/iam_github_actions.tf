@@ -43,5 +43,7 @@ resource "aws_iam_role" "github_actions" {
 resource "aws_iam_role_policy" "github_actions_deployer" {
   name   = "DeployerPolicy"
   role   = aws_iam_role.github_actions.id
-  policy = file("${path.module}/iam_user_github_action_deployer.json")
+  policy = templatefile("${path.module}/iam_user_github_action_deployer.json.tftpl", {
+    account_id = local.account_id
+  })
 }

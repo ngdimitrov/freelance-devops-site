@@ -14,6 +14,7 @@ const __dirname = path.dirname(__filename);
 const app = express();
 const port = process.env.PORT || 3000;
 const ALLOWED_ORIGIN = process.env.ALLOWED_ORIGIN || 'https://nikolaydimitrov.dev';
+const CONTACT_TO_EMAIL = process.env.CONTACT_TO_EMAIL;
 
 const LIMITS = { name: 100, email: 254, message: 5000, prompt: 1000 };
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -44,6 +45,11 @@ const escHtml = s => String(s)
 // Contact endpoint
 app.post('/api/contact', async (req, res) => {
     const { name, email, message, website } = req.body;
+
+    if (!CONTACT_TO_EMAIL) {
+        console.error('Missing CONTACT_TO_EMAIL');
+        return res.status(500).json({ error: 'Server configuration error' });
+    }
 
     // Server-side honeypot
     if (website) {
@@ -79,7 +85,7 @@ app.post('/api/contact', async (req, res) => {
     try {
         await resend.emails.send({
             from: 'Portfolio Contact <info@nikolaydimitrov.dev>',
-            to: ['contact@example.com'],
+            to: [CONTACT_TO_EMAIL],
             replyTo: email,
             subject: `New Contact from ${safeName}`,
             html: `

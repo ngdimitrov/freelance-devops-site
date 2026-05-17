@@ -30,6 +30,14 @@ provider "aws" {
   region = "us-east-1"
 }
 
+data "aws_caller_identity" "current" {}
+data "aws_region" "current" {}
+
+locals {
+  account_id  = data.aws_caller_identity.current.account_id
+  kms_key_arn = "arn:aws:kms:${data.aws_region.current.name}:${local.account_id}:key/${var.kms_key_id}"
+}
+
 resource "aws_s3_bucket" "website_bucket" {
   bucket = "nikolaydimitrov.dev-frontend"
 }

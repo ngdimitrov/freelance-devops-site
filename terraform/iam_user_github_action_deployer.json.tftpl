@@ -93,8 +93,8 @@
         "apigateway:*"
       ],
       "Resource": [
-        "arn:aws:lambda:*:000000000000:function:geminiChatFunction",
-        "arn:aws:lambda:*:000000000000:function:sendEmailFunction",
+        "arn:aws:lambda:*:${account_id}:function:geminiChatFunction",
+        "arn:aws:lambda:*:${account_id}:function:sendEmailFunction",
         "arn:aws:apigateway:*::/apis/*",
         "arn:aws:apigateway:*::/restapis/*"
       ]
@@ -103,7 +103,7 @@
       "Sid": "ManageCloudFrontDistribution",
       "Effect": "Allow",
       "Action": "cloudfront:*",
-      "Resource": "arn:aws:cloudfront::000000000000:distribution/E2XZPLP9E3TCRM"
+      "Resource": "arn:aws:cloudfront::${account_id}:distribution/E2XZPLP9E3TCRM"
     },
     {
       "Sid": "ManageCloudFrontGlobal",
@@ -153,15 +153,15 @@
         "iam:ListRoleTags"
       ],
       "Resource": [
-        "arn:aws:iam::000000000000:role/GitHubActionsWorkflowRole",
-        "arn:aws:iam::000000000000:role/serverless_lambda_role"
+        "arn:aws:iam::${account_id}:role/GitHubActionsWorkflowRole",
+        "arn:aws:iam::${account_id}:role/serverless_lambda_role"
       ]
     },
     {
       "Sid": "PassLambdaExecutionRole",
       "Effect": "Allow",
       "Action": "iam:PassRole",
-      "Resource": "arn:aws:iam::000000000000:role/serverless_lambda_role",
+      "Resource": "arn:aws:iam::${account_id}:role/serverless_lambda_role",
       "Condition": {
         "StringEquals": {
           "iam:PassedToService": "lambda.amazonaws.com"
@@ -186,8 +186,8 @@
       "Resource": [
         "arn:aws:route53:::hostedzone/Z079013913IFJAX1QCJ32",
         "arn:aws:route53:::change/*",
-        "arn:aws:acm:*:000000000000:certificate/*",
-        "arn:aws:kms:*:000000000000:key/*"
+        "arn:aws:acm:*:${account_id}:certificate/*",
+        "arn:aws:kms:*:${account_id}:key/*"
       ]
     },
     {
@@ -205,10 +205,10 @@
         "logs:UntagResource"
       ],
       "Resource": [
-        "arn:aws:logs:eu-north-1:000000000000:log-group:/aws/lambda/geminiChatFunction",
-        "arn:aws:logs:eu-north-1:000000000000:log-group:/aws/lambda/geminiChatFunction:*",
-        "arn:aws:logs:eu-north-1:000000000000:log-group:/aws/lambda/sendEmailFunction",
-        "arn:aws:logs:eu-north-1:000000000000:log-group:/aws/lambda/sendEmailFunction:*"
+        "arn:aws:logs:eu-north-1:${account_id}:log-group:/aws/lambda/geminiChatFunction",
+        "arn:aws:logs:eu-north-1:${account_id}:log-group:/aws/lambda/geminiChatFunction:*",
+        "arn:aws:logs:eu-north-1:${account_id}:log-group:/aws/lambda/sendEmailFunction",
+        "arn:aws:logs:eu-north-1:${account_id}:log-group:/aws/lambda/sendEmailFunction:*"
       ]
     },
     {
@@ -223,7 +223,7 @@
         "cloudwatch:TagResource",
         "cloudwatch:UntagResource"
       ],
-      "Resource": "arn:aws:cloudwatch:eu-north-1:000000000000:alarm:*"
+      "Resource": "arn:aws:cloudwatch:eu-north-1:${account_id}:alarm:*"
     },
     {
       "Sid": "ManageAlertsSnsTopic",
@@ -243,8 +243,8 @@
         "sns:UntagResource"
       ],
       "Resource": [
-        "arn:aws:sns:eu-north-1:000000000000:site-ops-alerts",
-        "arn:aws:sns:eu-north-1:000000000000:site-ops-alerts:*"
+        "arn:aws:sns:eu-north-1:${account_id}:site-ops-alerts",
+        "arn:aws:sns:eu-north-1:${account_id}:site-ops-alerts:*"
       ]
     },
     {
@@ -257,7 +257,7 @@
         "budgets:TagResource",
         "budgets:UntagResource"
       ],
-      "Resource": "arn:aws:budgets::000000000000:budget/monthly-cost-budget"
+      "Resource": "arn:aws:budgets::${account_id}:budget/monthly-cost-budget"
     },
     {
       "Sid": "AllowGlobalReadActions",

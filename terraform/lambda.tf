@@ -26,7 +26,7 @@ resource "aws_iam_role_policy" "lambda_kms" {
           "kms:Decrypt"
         ]
         Resource = [
-          "arn:aws:kms:eu-north-1:000000000000:key/5a359d20-32e0-4eef-80ef-54003cef9aee"
+          local.kms_key_arn
         ]
       }
     ]
@@ -69,7 +69,7 @@ resource "aws_lambda_function" "gemini_api" {
   handler       = "index.handler"
   runtime       = "nodejs22.x"
   timeout       = 20
-  kms_key_arn   = var.kms_key_arn
+  kms_key_arn   = local.kms_key_arn
 
   reserved_concurrent_executions = var.gemini_reserved_concurrency
 
@@ -91,7 +91,7 @@ resource "aws_lambda_function" "resend_api" {
   handler       = "index.handler"
   runtime       = "nodejs22.x"
   timeout       = 3
-  kms_key_arn   = var.kms_key_arn
+  kms_key_arn   = local.kms_key_arn
 
   reserved_concurrent_executions = var.resend_reserved_concurrency
 
@@ -99,7 +99,8 @@ resource "aws_lambda_function" "resend_api" {
 
   environment {
     variables = {
-      RESEND_API_KEY = var.resend_api_key
+      RESEND_API_KEY   = var.resend_api_key
+      CONTACT_TO_EMAIL = var.alert_email
     }
   }
 }

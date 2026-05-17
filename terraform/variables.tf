@@ -1,7 +1,7 @@
-variable "kms_key_arn" {
-  description = "KMS key ARN used to encrypt Lambda environment variables at rest"
+variable "kms_key_id" {
+  description = "KMS key ID used to encrypt Lambda environment variables at rest (ARN is built from the current account/region)"
   type        = string
-  default     = "arn:aws:kms:eu-north-1:000000000000:key/5a359d20-32e0-4eef-80ef-54003cef9aee"
+  default     = "5a359d20-32e0-4eef-80ef-54003cef9aee"
 }
 
 variable "gemini_api_key" {
@@ -17,9 +17,13 @@ variable "resend_api_key" {
 }
 
 variable "alert_email" {
-  description = "Email address for operational alerts (Lambda errors, budget)"
+  description = "Email for operational alerts (Lambda errors, budget) and the contact-form destination. Supplied via TF_VAR_alert_email; never hardcoded."
   type        = string
-  default     = "contact@example.com"
+
+  validation {
+    condition     = can(regex("^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$", var.alert_email))
+    error_message = "alert_email must be a valid email address (set TF_VAR_alert_email)."
+  }
 }
 
 variable "monthly_budget_usd" {

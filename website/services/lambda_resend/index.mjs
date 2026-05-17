@@ -25,9 +25,10 @@ const reply = (statusCode, payload) => ({
 
 export const handler = async (event) => {
   const RESEND_API_KEY = process.env.RESEND_API_KEY;
+  const CONTACT_TO_EMAIL = process.env.CONTACT_TO_EMAIL;
 
-  if (!RESEND_API_KEY) {
-    console.error("Missing RESEND_API_KEY");
+  if (!RESEND_API_KEY || !CONTACT_TO_EMAIL) {
+    console.error("Missing RESEND_API_KEY or CONTACT_TO_EMAIL");
     return reply(500, { error: "Server configuration error" });
   }
 
@@ -84,7 +85,7 @@ export const handler = async (event) => {
       },
       body: JSON.stringify({
         from: 'Portfolio Contact <info@nikolaydimitrov.dev>',
-        to: ['contact@example.com'],
+        to: [CONTACT_TO_EMAIL],
         reply_to: email,
         subject: `New Message from ${safeName}`,
         html: `
