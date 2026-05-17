@@ -14,6 +14,18 @@ resource "aws_sns_topic_subscription" "alerts_email" {
   endpoint  = var.alert_email
 }
 
+# --- IAM propagation barrier ------------------------------------------------
+
+# IAM is eventually consistent: a freshly-updated deployer policy is not
+# guaranteed effective the instant PutRolePolicy returns. Resources below
+# exercise newly-granted permissions immediately on create (CloudWatch
+# PutMetricAlarm, Budgets ListTagsForResource); the budget in particular
+# orphans on failure (re-run then hits DuplicateRecordException). Wait it out.
+resource "time_sleep" "wait_for_iam_propagation" {
+  depends_on      = [aws_iam_role_policy.github_actions_deployer]
+  create_duration = "30s"
+}
+
 # --- Lambda alarms ----------------------------------------------------------
 
 locals {
@@ -24,7 +36,8 @@ locals {
 }
 
 resource "aws_cloudwatch_metric_alarm" "lambda_errors" {
-  for_each = local.monitored_lambdas
+  for_each   = local.monitored_lambdas
+  depends_on = [time_sleep.wait_for_iam_propagation]
 
   alarm_name          = "${each.value}-errors"
   alarm_description    = "Lambda ${each.value} returned errors"
@@ -46,7 +59,8 @@ resource "aws_cloudwatch_metric_alarm" "lambda_errors" {
 }
 
 resource "aws_cloudwatch_metric_alarm" "lambda_throttles" {
-  for_each = local.monitored_lambdas
+  for_each   = local.monitored_lambdas
+  depends_on = [time_sleep.wait_for_iam_propagation]
 
   alarm_name          = "${each.value}-throttles"
   alarm_description    = "Lambda ${each.value} is being throttled (possible abuse or under-provisioned concurrency)"
@@ -69,7 +83,7 @@ resource "aws_cloudwatch_metric_alarm" "lambda_throttles" {
 # --- Cost guardrail ---------------------------------------------------------
 
 resource "aws_budgets_budget" "monthly" {
-  depends_on = [aws_iam_role_policy.github_actions_deployer]
+  depends_on = [time_sleep.wait_for_iam_propagation]
 
   name         = "monthly-cost-budget"
   budget_type  = "COST"
