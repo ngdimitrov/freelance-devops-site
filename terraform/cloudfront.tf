@@ -50,8 +50,18 @@ resource "aws_cloudfront_response_headers_policy" "security_headers" {
       override                   = true
     }
     content_security_policy {
-      content_security_policy = "default-src 'self'; script-src 'self' https://unpkg.com 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self' data:; connect-src 'self'; frame-ancestors 'none'; base-uri 'self'; form-action 'self'"
-      override                = true
+      content_security_policy = join("; ", [
+        "default-src 'self'",
+        "script-src 'self' https://unpkg.com 'unsafe-inline'",
+        "style-src 'self' 'unsafe-inline'",
+        "img-src 'self' data:",
+        "font-src 'self' data:",
+        "connect-src 'self'",
+        "frame-ancestors 'none'",
+        "base-uri 'self'",
+        "form-action 'self'",
+      ])
+      override = true
     }
   }
 }
@@ -61,6 +71,18 @@ data "aws_acm_certificate" "cert" {
   domain      = "nikolaydimitrov.dev"
   statuses    = ["ISSUED"]
   most_recent = true
+}
+
+data "aws_cloudfront_cache_policy" "caching_disabled" {
+  name = "Managed-CachingDisabled"
+}
+
+data "aws_cloudfront_cache_policy" "caching_optimized" {
+  name = "Managed-CachingOptimized"
+}
+
+data "aws_cloudfront_origin_request_policy" "all_viewer_except_host" {
+  name = "Managed-AllViewerExceptHostHeader"
 }
 
 resource "aws_cloudfront_distribution" "main" {
@@ -94,29 +116,26 @@ resource "aws_cloudfront_distribution" "main" {
     path_pattern     = "/api/*"
     target_origin_id = "API-Gateway"
 
-    allowed_methods  = ["GET", "HEAD", "OPTIONS", "PUT", "POST", "PATCH", "DELETE"]
-    cached_methods   = ["GET", "HEAD"]
+    allowed_methods = ["GET", "HEAD", "OPTIONS", "PUT", "POST", "PATCH", "DELETE"]
+    cached_methods  = ["GET", "HEAD"]
 
     viewer_protocol_policy = "redirect-to-https"
 
-    # CachingDisabled
-    cache_policy_id = "4135ea2d-6df8-44a3-9df3-4b5a84be39ad" 
-    # AllViewerExceptHostHeader
-    origin_request_policy_id = "b689b0a8-53d0-40ab-baf2-68738e2966ac" 
+    cache_policy_id          = data.aws_cloudfront_cache_policy.caching_disabled.id
+    origin_request_policy_id = data.aws_cloudfront_origin_request_policy.all_viewer_except_host.id
   }
 
   # BEHAVIOR S3 Frontend
   default_cache_behavior {
     target_origin_id = "S3-Frontend"
 
-    allowed_methods  = ["GET", "HEAD"]
-    cached_methods   = ["GET", "HEAD"]
+    allowed_methods = ["GET", "HEAD"]
+    cached_methods  = ["GET", "HEAD"]
 
     viewer_protocol_policy = "redirect-to-https"
     compress               = true
 
-    # CachingOptimized
-    cache_policy_id            = "658327ea-f89d-4fab-a63d-7e88639e58f6"
+    cache_policy_id            = data.aws_cloudfront_cache_policy.caching_optimized.id
     response_headers_policy_id = aws_cloudfront_response_headers_policy.security_headers.id
 
     function_association {

@@ -39,7 +39,7 @@ resource "aws_cloudwatch_metric_alarm" "lambda_errors" {
   depends_on = [time_sleep.wait_for_iam_propagation]
 
   alarm_name          = "${each.value}-errors"
-  alarm_description    = "Lambda ${each.value} returned errors"
+  alarm_description   = "Lambda ${each.value} returned errors"
   namespace           = "AWS/Lambda"
   metric_name         = "Errors"
   statistic           = "Sum"
@@ -62,7 +62,7 @@ resource "aws_cloudwatch_metric_alarm" "lambda_throttles" {
   depends_on = [time_sleep.wait_for_iam_propagation]
 
   alarm_name          = "${each.value}-throttles"
-  alarm_description    = "Lambda ${each.value} is being throttled (possible abuse or under-provisioned concurrency)"
+  alarm_description   = "Lambda ${each.value} is being throttled (possible abuse or under-provisioned concurrency)"
   namespace           = "AWS/Lambda"
   metric_name         = "Throttles"
   statistic           = "Sum"
@@ -77,6 +77,7 @@ resource "aws_cloudwatch_metric_alarm" "lambda_throttles" {
   }
 
   alarm_actions = [aws_sns_topic.alerts.arn]
+  ok_actions    = [aws_sns_topic.alerts.arn]
 }
 
 # --- Cost guardrail ---------------------------------------------------------

@@ -1,2 +1,13 @@
 website/.env
 .DS_Store
+
+# Terraform
+terraform/.terraform/
+*.tfstate
+*.tfstate.*
+*.tfplan
+*.tfvars
+
+# Lambda build artifacts (generated in CI)
+gemini.zip
+resend.zip
