@@ -3,7 +3,8 @@ const ALLOWED_ORIGIN = "https://nikolaydimitrov.dev";
 const CORS_HEADERS = {
   "Access-Control-Allow-Origin": ALLOWED_ORIGIN,
   "Access-Control-Allow-Headers": "Content-Type",
-  "Access-Control-Allow-Methods": "OPTIONS,POST"
+  "Access-Control-Allow-Methods": "OPTIONS,POST",
+  "Content-Type": "application/json"
 };
 
 // Field limits (server-side enforced; frontend maxlength is bypassable)
@@ -19,7 +20,7 @@ const escHtml = s => String(s)
 
 const reply = (statusCode, payload) => ({
   statusCode,
-  headers: { ...CORS_HEADERS, "Content-Type": "application/json" },
+  headers: CORS_HEADERS,
   body: JSON.stringify(payload)
 });
 

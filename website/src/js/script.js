@@ -64,7 +64,7 @@ async function generateArchitecture() {
             throw new Error(data.error);
         }
 
-        const rawText = data?.candidates?.[0]?.content?.parts?.[0]?.text;
+        const rawText = data?.text;
         if (!rawText) {
             throw new Error('Empty response');
         }
@@ -205,7 +205,7 @@ window.closeLegalModal = () => {
 };
 
 document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape' && !legalModal.classList.contains('hidden')) {
+    if (e.key === 'Escape' && legalModal && !legalModal.classList.contains('hidden')) {
         window.closeLegalModal();
     }
 });

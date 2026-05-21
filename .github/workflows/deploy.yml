@@ -39,7 +39,7 @@ jobs:
         with:
           node-version: 22
           cache: 'npm'
-          cache-dependency-path: website/package.json
+          cache-dependency-path: website/package-lock.json
 
       - name: Install & Build
         working-directory: ./website
@@ -56,8 +56,8 @@ jobs:
 
       - name: Prepare Lambda Functions
         run: |
-          cd website/services/lambda_gemini && zip -r ../../../gemini.zip . && cd ../../..
-          cd website/services/lambda_resend && zip -r ../../../resend.zip . && cd ../../..
+          cd website/services/lambda_gemini && zip -r ../../../gemini.zip . -x "node_modules/*" ".git/*" "*.md" && cd ../../..
+          cd website/services/lambda_resend && zip -r ../../../resend.zip . -x "node_modules/*" ".git/*" "*.md" && cd ../../..
 
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
@@ -76,7 +76,7 @@ jobs:
 
       - name: Terraform Format
         working-directory: ./terraform
-        run: terraform fmt -recursive
+        run: terraform fmt -recursive -check -diff
 
       - name: Terraform Validate
         working-directory: ./terraform

@@ -84,7 +84,13 @@ BOUNDARIES:
       return reply(502, { error: 'Failed to generate content' });
     }
 
-    return reply(200, data);
+    const text = data?.candidates?.[0]?.content?.parts?.[0]?.text;
+    if (!text) {
+      console.error("Empty Gemini response", JSON.stringify(data).slice(0, 500));
+      return reply(502, { error: 'Empty response' });
+    }
+
+    return reply(200, { text });
   } catch (error) {
     console.error("Gemini Error:", error);
     return reply(500, { error: 'Failed to generate content' });
