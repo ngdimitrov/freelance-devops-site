@@ -36,7 +36,7 @@ The project uses **GitHub Actions** to implement an automated CI/CD pipeline tri
 ### The pipeline performs the following steps:
 
 1.  ** Frontend Build**
-    * Installs dependencies and builds the React/Vite application.
+    * Installs dependencies and builds the Vite application.
     * Generates the optimized `/dist` static output.
 
 2.  ** Infrastructure Deployment**

@@ -28,5 +28,5 @@ output "cloudfront_distribution_id" {
 
 output "website_url" {
   description = "Public website URL"
-  value       = "https://nikolaydimitrov.dev"
+  value       = "https://${local.domain}"
 }

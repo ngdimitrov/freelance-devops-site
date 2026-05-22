@@ -7,8 +7,9 @@ const CORS_HEADERS = {
   "Content-Type": "application/json"
 };
 
-// Field limits (server-side enforced; frontend maxlength is bypassable)
-const LIMITS = { name: 100, email: 254, message: 5000 };
+// Field limits (server-side enforced; frontend maxlength is bypassable).
+// Values mirror the frontend maxlength attributes in index.html.
+const LIMITS = { name: 100, email: 254, message: 500 };
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 const escHtml = s => String(s)

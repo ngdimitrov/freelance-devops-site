@@ -23,11 +23,25 @@ terraform {
 
 provider "aws" {
   region = "eu-north-1"
+
+  default_tags {
+    tags = {
+      Project   = "portfolio-devops-website"
+      ManagedBy = "terraform"
+    }
+  }
 }
 
 provider "aws" {
   alias  = "us_east_1"
   region = "us-east-1"
+
+  default_tags {
+    tags = {
+      Project   = "portfolio-devops-website"
+      ManagedBy = "terraform"
+    }
+  }
 }
 
 data "aws_caller_identity" "current" {}
@@ -35,11 +49,37 @@ data "aws_region" "current" {}
 
 locals {
   account_id  = data.aws_caller_identity.current.account_id
+  domain      = "nikolaydimitrov.dev"
   kms_key_arn = "arn:aws:kms:${data.aws_region.current.name}:${local.account_id}:key/${var.kms_key_id}"
 }
 
 resource "aws_s3_bucket" "website_bucket" {
-  bucket = "nikolaydimitrov.dev-frontend"
+  bucket = "${local.domain}-frontend"
+}
+
+resource "aws_s3_bucket_versioning" "website_bucket" {
+  bucket = aws_s3_bucket.website_bucket.id
+
+  versioning_configuration {
+    status = "Enabled"
+  }
+}
+
+# Versioning keeps every overwritten object forever; expire old versions so the
+# bucket (and cost) does not grow unbounded across deploys.
+resource "aws_s3_bucket_lifecycle_configuration" "website_bucket" {
+  bucket = aws_s3_bucket.website_bucket.id
+
+  rule {
+    id     = "expire-noncurrent-versions"
+    status = "Enabled"
+
+    filter {}
+
+    noncurrent_version_expiration {
+      noncurrent_days = 30
+    }
+  }
 }
 
 resource "aws_s3_bucket_public_access_block" "website_bucket" {

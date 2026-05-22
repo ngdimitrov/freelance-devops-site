@@ -1,6 +1,9 @@
 website/.env
 .DS_Store
 
+# IDE
+.idea/
+
 # Terraform
 terraform/.terraform/
 *.tfstate

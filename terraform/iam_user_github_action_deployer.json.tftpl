@@ -26,12 +26,15 @@
         "s3:PutBucketCORS",
         "s3:GetBucketCORS",
         "s3:GetBucketVersioning",
+        "s3:PutBucketVersioning",
         "s3:GetEncryptionConfiguration",
         "s3:GetBucketLogging",
         "s3:GetBucketRequestPayment",
         "s3:GetBucketObjectLockConfiguration",
         "s3:GetLifecycleConfiguration",
+        "s3:PutLifecycleConfiguration",
         "s3:GetBucketTagging",
+        "s3:PutBucketTagging",
         "s3:GetAccelerateConfiguration",
         "s3:GetReplicationConfiguration"
       ],
@@ -90,7 +93,11 @@
         "lambda:PutFunctionConcurrency",
         "lambda:DeleteFunctionConcurrency",
         "lambda:GetFunctionConcurrency",
-        "apigateway:*"
+        "apigateway:GET",
+        "apigateway:POST",
+        "apigateway:PUT",
+        "apigateway:PATCH",
+        "apigateway:DELETE"
       ],
       "Resource": [
         "arn:aws:lambda:*:${account_id}:function:geminiChatFunction",
@@ -102,8 +109,19 @@
     {
       "Sid": "ManageCloudFrontDistribution",
       "Effect": "Allow",
-      "Action": "cloudfront:*",
-      "Resource": "arn:aws:cloudfront::${account_id}:distribution/E2XZPLP9E3TCRM"
+      "Action": [
+        "cloudfront:GetDistribution",
+        "cloudfront:GetDistributionConfig",
+        "cloudfront:UpdateDistribution",
+        "cloudfront:DeleteDistribution",
+        "cloudfront:CreateInvalidation",
+        "cloudfront:GetInvalidation",
+        "cloudfront:ListInvalidations",
+        "cloudfront:TagResource",
+        "cloudfront:UntagResource",
+        "cloudfront:ListTagsForResource"
+      ],
+      "Resource": "${cloudfront_distribution_arn}"
     },
     {
       "Sid": "ManageCloudFrontGlobal",
@@ -178,20 +196,26 @@
         "route53:ListTagsForResource",
         "acm:ListTagsForCertificate",
         "acm:DescribeCertificate",
-        "acm:GetCertificate",
+        "acm:GetCertificate"
+      ],
+      "Resource": [
+        "arn:aws:route53:::hostedzone/${hosted_zone_id}",
+        "arn:aws:route53:::change/*",
+        "arn:aws:acm:*:${account_id}:certificate/*"
+      ]
+    },
+    {
+      "Sid": "DecryptLambdaEnvKey",
+      "Effect": "Allow",
+      "Action": [
         "kms:Decrypt",
         "kms:DescribeKey",
         "kms:CreateGrant"
       ],
-      "Resource": [
-        "arn:aws:route53:::hostedzone/Z079013913IFJAX1QCJ32",
-        "arn:aws:route53:::change/*",
-        "arn:aws:acm:*:${account_id}:certificate/*",
-        "arn:aws:kms:*:${account_id}:key/*"
-      ]
+      "Resource": "${kms_key_arn}"
     },
     {
-      "Sid": "ManageLambdaLogGroups",
+      "Sid": "ManageServiceLogGroups",
       "Effect": "Allow",
       "Action": [
         "logs:CreateLogGroup",
@@ -208,7 +232,9 @@
         "arn:aws:logs:eu-north-1:${account_id}:log-group:/aws/lambda/geminiChatFunction",
         "arn:aws:logs:eu-north-1:${account_id}:log-group:/aws/lambda/geminiChatFunction:*",
         "arn:aws:logs:eu-north-1:${account_id}:log-group:/aws/lambda/sendEmailFunction",
-        "arn:aws:logs:eu-north-1:${account_id}:log-group:/aws/lambda/sendEmailFunction:*"
+        "arn:aws:logs:eu-north-1:${account_id}:log-group:/aws/lambda/sendEmailFunction:*",
+        "arn:aws:logs:eu-north-1:${account_id}:log-group:/aws/apigateway/nikolaydimitrov-gateway",
+        "arn:aws:logs:eu-north-1:${account_id}:log-group:/aws/apigateway/nikolaydimitrov-gateway:*"
       ]
     },
     {
