@@ -55,6 +55,10 @@ locals {
 
 resource "aws_s3_bucket" "website_bucket" {
   bucket = "${local.domain}-frontend"
+
+  # Tagging via provider default_tags needs s3:PutBucketTagging, granted by the
+  # deployer policy in this same apply — wait for the IAM propagation barrier.
+  depends_on = [time_sleep.wait_for_iam_propagation]
 }
 
 resource "aws_s3_bucket_versioning" "website_bucket" {

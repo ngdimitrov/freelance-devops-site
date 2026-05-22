@@ -11,6 +11,11 @@ resource "aws_apigatewayv2_api" "http_api" {
 }
 
 resource "aws_cloudwatch_log_group" "api_access" {
+  # Creating this new group needs logs:CreateLogGroup on the API Gateway log
+  # ARN, granted by the deployer policy in this same apply — wait for the IAM
+  # propagation barrier.
+  depends_on = [time_sleep.wait_for_iam_propagation]
+
   name              = "/aws/apigateway/${aws_apigatewayv2_api.http_api.name}"
   retention_in_days = 30
 }

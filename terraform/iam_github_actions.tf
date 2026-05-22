@@ -39,9 +39,13 @@ resource "aws_iam_role_policy" "github_actions_deployer" {
   name = "DeployerPolicy"
   role = aws_iam_role.github_actions.id
   policy = templatefile("${path.module}/iam_user_github_action_deployer.json.tftpl", {
-    account_id                  = local.account_id
-    kms_key_arn                 = local.kms_key_arn
-    hosted_zone_id              = data.aws_route53_zone.main.zone_id
-    cloudfront_distribution_arn = aws_cloudfront_distribution.main.arn
+    account_id     = local.account_id
+    kms_key_arn    = local.kms_key_arn
+    hosted_zone_id = data.aws_route53_zone.main.zone_id
+    # Hard-coded constant, NOT aws_cloudfront_distribution.main.arn. A resource
+    # reference would make this policy depend on the distribution, scheduling
+    # the policy update after the ~10-min CloudFront apply — so resources that
+    # need freshly granted permissions run first and fail with AccessDenied.
+    cloudfront_distribution_arn = "arn:aws:cloudfront::${local.account_id}:distribution/${local.cloudfront_distribution_id}"
   })
 }

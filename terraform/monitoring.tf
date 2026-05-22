@@ -21,7 +21,15 @@ resource "aws_sns_topic_subscription" "alerts_email" {
 # delay use those permissions immediately on creation; the brief wait ensures
 # propagation has completed before they run.
 resource "time_sleep" "wait_for_iam_propagation" {
-  depends_on      = [aws_iam_role_policy.github_actions_deployer]
+  depends_on = [aws_iam_role_policy.github_actions_deployer]
+
+  # Re-create (and re-sleep) whenever the deployer policy changes, so a policy
+  # update propagates before resources gated on this barrier run. Without a
+  # trigger the sleep happens only once, on the barrier's first creation.
+  triggers = {
+    deployer_policy = sha1(aws_iam_role_policy.github_actions_deployer.policy)
+  }
+
   create_duration = "30s"
 }
 
