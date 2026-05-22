@@ -86,6 +86,10 @@ locals {
   cache_policy_caching_optimized = "658327ea-f89d-4fab-a63d-7e88639e58f6"
   # Managed-AllViewerExceptHostHeader
   origin_request_policy_all_viewer_except_host = "b689b0a8-53d0-40ab-baf2-68738e2966ac"
+
+  # CloudFront distribution ID — treated as a constant on purpose; see
+  # iam_github_actions.tf for why it is not aws_cloudfront_distribution.main.id.
+  cloudfront_distribution_id = "E2XZPLP9E3TCRM"
 }
 
 resource "aws_cloudfront_distribution" "main" {
