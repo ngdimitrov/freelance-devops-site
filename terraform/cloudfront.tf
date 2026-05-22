@@ -52,7 +52,7 @@ resource "aws_cloudfront_response_headers_policy" "security_headers" {
     content_security_policy {
       content_security_policy = join("; ", [
         "default-src 'self'",
-        "script-src 'self' https://unpkg.com 'unsafe-inline'",
+        "script-src 'self' https://unpkg.com",
         "style-src 'self' 'unsafe-inline'",
         "img-src 'self' data:",
         "font-src 'self' data:",
@@ -68,7 +68,7 @@ resource "aws_cloudfront_response_headers_policy" "security_headers" {
 
 data "aws_acm_certificate" "cert" {
   provider    = aws.us_east_1
-  domain      = "nikolaydimitrov.dev"
+  domain      = local.domain
   statuses    = ["ISSUED"]
   most_recent = true
 }
@@ -89,7 +89,7 @@ resource "aws_cloudfront_distribution" "main" {
   enabled             = true
   is_ipv6_enabled     = true
   default_root_object = "index.html"
-  aliases             = ["nikolaydimitrov.dev"]
+  aliases             = [local.domain, "www.${local.domain}"]
 
   # ORIGIN S3 Frontend
   origin {

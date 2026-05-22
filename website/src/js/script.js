@@ -69,13 +69,21 @@ async function generateArchitecture() {
             throw new Error('Empty response');
         }
 
-        const escaped = rawText
-            .replace(/&/g, '&amp;')
-            .replace(/</g, '&lt;')
-            .replace(/>/g, '&gt;');
-        const formattedText = escaped.replace(/\*\*(.*?)\*\*/g, '<span class="text-indigo-400 font-bold">$1</span>');
-
-        resultText.innerHTML = formattedText;
+        // Render **bold** segments as styled spans via the DOM — textContent
+        // auto-escapes, so no innerHTML and no manual HTML escaping needed.
+        resultText.replaceChildren();
+        rawText.split(/(\*\*.+?\*\*)/g).forEach(part => {
+            if (!part) return;
+            const bold = /^\*\*(.+)\*\*$/.exec(part);
+            if (bold) {
+                const span = document.createElement('span');
+                span.className = 'text-indigo-400 font-bold';
+                span.textContent = bold[1];
+                resultText.appendChild(span);
+            } else {
+                resultText.appendChild(document.createTextNode(part));
+            }
+        });
         resultDiv.classList.remove('hidden');
 
     } catch (error) {
@@ -88,7 +96,7 @@ async function generateArchitecture() {
         btn.innerHTML = `<span>Generate Strategy ✨</span>`;
     }
 }
-window.generateArchitecture = generateArchitecture;
+document.getElementById('ai-btn')?.addEventListener('click', generateArchitecture);
 
 // CHARACTER COUNTERS
 document.querySelectorAll('textarea[maxlength]').forEach(textarea => {
@@ -183,10 +191,10 @@ function launchConfetti() {
 // LEGAL MODAL
 const legalModal = document.getElementById('legal-modal');
 
-window.openLegalModal = (sectionId) => {
+const openLegalModal = (sectionId) => {
     if (!legalModal) return;
     legalModal.classList.remove('hidden');
-    
+
     if (sectionId) {
         const targetSection = document.getElementById(`legal-${sectionId}`);
         if (targetSection) {
@@ -198,14 +206,22 @@ window.openLegalModal = (sectionId) => {
     document.body.style.overflow = 'hidden';
 };
 
-window.closeLegalModal = () => {
+const closeLegalModal = () => {
     if (!legalModal) return;
     legalModal.classList.add('hidden');
     document.body.style.overflow = '';
 };
 
+// Wire up modal triggers (CSP: no inline onclick handlers).
+document.querySelectorAll('[data-legal]').forEach(btn => {
+    btn.addEventListener('click', () => openLegalModal(btn.dataset.legal));
+});
+document.querySelectorAll('[data-close-legal]').forEach(btn => {
+    btn.addEventListener('click', closeLegalModal);
+});
+
 document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape' && legalModal && !legalModal.classList.contains('hidden')) {
-        window.closeLegalModal();
+        closeLegalModal();
     }
 });

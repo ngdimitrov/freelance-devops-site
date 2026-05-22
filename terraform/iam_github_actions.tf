@@ -39,6 +39,9 @@ resource "aws_iam_role_policy" "github_actions_deployer" {
   name = "DeployerPolicy"
   role = aws_iam_role.github_actions.id
   policy = templatefile("${path.module}/iam_user_github_action_deployer.json.tftpl", {
-    account_id = local.account_id
+    account_id                  = local.account_id
+    kms_key_arn                 = local.kms_key_arn
+    hosted_zone_id              = data.aws_route53_zone.main.zone_id
+    cloudfront_distribution_arn = aws_cloudfront_distribution.main.arn
   })
 }

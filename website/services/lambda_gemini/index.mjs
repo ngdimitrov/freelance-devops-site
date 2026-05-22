@@ -7,7 +7,8 @@ const CORS_HEADERS = {
   "Content-Type": "application/json"
 };
 
-const MAX_PROMPT_LENGTH = 1000;
+// Matches the frontend textarea maxlength (index.html #ai-input).
+const MAX_PROMPT_LENGTH = 500;
 
 const reply = (statusCode, payload) => ({
   statusCode,
@@ -68,9 +69,12 @@ BOUNDARIES:
 - Never impersonate Nikolay directly. You are his AI assistant.`;
 
   try {
-    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`, {
+    const response = await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': 'application/json',
+        'x-goog-api-key': apiKey
+      },
       body: JSON.stringify({
         contents: [{ parts: [{ text: prompt }] }],
         systemInstruction: { parts: [{ text: systemPrompt }] }
