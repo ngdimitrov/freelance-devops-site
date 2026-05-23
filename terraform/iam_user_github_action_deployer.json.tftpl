@@ -238,6 +238,20 @@
       ]
     },
     {
+      "Sid": "ManageApiGatewayLogDelivery",
+      "Effect": "Allow",
+      "Action": [
+        "logs:CreateLogDelivery",
+        "logs:GetLogDelivery",
+        "logs:UpdateLogDelivery",
+        "logs:DeleteLogDelivery",
+        "logs:ListLogDeliveries",
+        "logs:DescribeResourcePolicies",
+        "logs:PutResourcePolicy"
+      ],
+      "Resource": "*"
+    },
+    {
       "Sid": "ManageCloudWatchAlarms",
       "Effect": "Allow",
       "Action": [
