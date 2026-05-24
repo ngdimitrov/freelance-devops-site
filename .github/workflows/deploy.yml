@@ -25,17 +25,16 @@ jobs:
     # approval. The OIDC trust policy already permits the resulting
     # `environment:production` subject claim (see iam_github_actions.tf).
     env:
-      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
       TF_VAR_resend_api_key: ${{ secrets.RESEND_API_KEY }}
       TF_VAR_gemini_api_key: ${{ secrets.GEMINI_API_KEY }}
       TF_VAR_alert_email: ${{ vars.ALERT_EMAIL }}
 
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
           node-version: 22
           cache: 'npm'
@@ -60,13 +59,13 @@ jobs:
           cd website/services/lambda_resend && zip -r ../../../resend.zip . -x "node_modules/*" ".git/*" "*.md" && cd ../../..
 
       - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v4
+        uses: aws-actions/configure-aws-credentials@v6
         with:
           role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID }}:role/GitHubActionsWorkflowRole
           aws-region: eu-north-1
 
       - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v3
+        uses: hashicorp/setup-terraform@v4
         with:
           terraform_wrapper: false
 
